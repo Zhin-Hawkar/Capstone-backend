@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Support\Facades\DB;
+
+
+class UserController extends Controller
+{
+
+    public function register(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            $emailError = $errors->has('email') ? $errors->get('email') : null;
+
+            return response()->json([
+                "message" => "The given data was invalid.",
+                "errors"  => $errors,
+                "email_error" => $emailError
+            ], 200);
+        }
+
+        $user = User::create([
+            'firstName' => $req->first_name,
+            'lastName' => $req->last_name,
+            'email' => $req->email,
+            'password' => Hash::make($req->password),
+        ]);
+        $token = $user->createToken('api-token')->plainTextToken;
+        return response()->json([
+            'code' => 200,
+            'message' => "User Registered Successfully",
+            'first_name' => $user->firstName,
+            'last_name' => $user->lastName,
+            'token' => $token,
+        ], 200);
+    }
+
+
+    public function login(Request $req)
+    {
+        try {
+            $validator = Validator::make($req->all(), [
+                'email' => 'required',
+                'password' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 402,
+                    'error' => $validator->errors(),
+                ], 200);
+            }
+
+            $user = User::where('email', $req->email)->first();
+            if (!$user || !Hash::check($req->password, $user->password)) {
+                return response()->json([
+                    'code' => 401,
+                    'error' => "Wrong Credentials",
+                ], 200);
+            }
+            $token = $user->createToken('api-token')->plainTextToken;
+            $user->remember_token = $token;
+            $user->save();
+
+            return response()->json([
+                'code' => 200,
+                'message' => "User logged in Successfully",
+                'user' => [
+                    'id' => $user->id,
+                    'first_name' => $user->firstName,
+                    'last_name' => $user->lastName,
+                    'email' => $user->email,
+                    'image' => $user->image,
+                ],
+                'token' => $token,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'code' => 500,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function logout(Request $req)
+    {
+        $req->user()->currentAccessToken()->delete();
+        return response()->json(['code' => 200, 'message' => 'Logged out']);
+    }
+}
