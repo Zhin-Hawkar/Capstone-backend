@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('firstName');
             $table->string('lastName');
+            $table->integer('age')->nullable();
+            $table->string('location')->nullable();
+            $table->string('description')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->rememberToken();

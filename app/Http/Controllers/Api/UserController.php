@@ -103,4 +103,8 @@ class UserController extends Controller
         $req->user()->currentAccessToken()->delete();
         return response()->json(['code' => 200, 'message' => 'Logged out']);
     }
+
+    public function editProfile(Request $req){
+        
+    }
 }
