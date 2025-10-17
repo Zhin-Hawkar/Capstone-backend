@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 
@@ -104,7 +104,34 @@ class UserController extends Controller
         return response()->json(['code' => 200, 'message' => 'Logged out']);
     }
 
-    public function editProfile(Request $req){
-        
+    public function editProfile(Request $req)
+    {
+
+        $user = User::where('email', $req->email)->first();
+        if (!$user) {
+            return response()->json([
+                'code' => 401,
+                'error' => "not authorized"
+            ], 200);
+        }
+        $validated = $req->validate([
+            'location' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0',
+            'description' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($req->hasFile('image')) {
+            if ($user->image && Storage::exists($user->image)) {
+                Storage::delete($user->image);
+            }
+            $path = $req->file('image')->store('public/user_images');
+            $validated['image'] = $path;
+        }
+        $user->update($validated);
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user
+        ], 200);
     }
 }
