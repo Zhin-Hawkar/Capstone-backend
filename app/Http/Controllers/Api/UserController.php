@@ -107,55 +107,60 @@ class UserController extends Controller
         return response()->json(['code' => 200, 'message' => 'Logged out']);
     }
 
-    public function editProfile(Request $req)
-    {
+public function editProfile(Request $req)
+{
+    $user = User::where('email', $req->email)->first();
 
-        $user = User::where('email', $req->email)->first();
-        if (!$user) {
-            return response()->json([
-                'code' => 401,
-                'error' => "not authorized"
-            ], 200);
-        }
-        $validator = Validator::make($req->all(), [
-            'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'age' => 'nullable|integer|min:0',
-            'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'code' => 422,
-                'error' => $validator->errors()
-            ], 422);
-        }
-
-        $validated = $validator->validated();
-
-        if ($req->hasFile('image')) {
-            if ($user->image && Storage::exists($user->image)) {
-                Storage::delete($user->image);
-            }
-            $path = $req->file('image')->store('public/user_images');
-            $validated['image'] = $path;
-        }
-        $user->update($validated);
+    if (!$user) {
         return response()->json([
-            'code' => 200,
-            'message' => 'Profile updated successfully',
-            'user' => [
-                'id' => $user->id,
-                'first_name' => $user->firstName,
-                'last_name' => $user->lastName,
-                'email' => $user->email,
-                'age' => $user->age,
-                'location' => $user->location,
-                'description' => $user->description,
-                'image' => $user->image,
-            ],
-        ], 200);
+            'code' => 401,
+            'error' => "not authorized"
+        ], 401);
     }
+
+    $validator = Validator::make($req->all(), [
+        'first_name' => 'nullable|string|max:255',
+        'last_name' => 'nullable|string|max:255',
+        'location' => 'nullable|string|max:255',
+        'age' => 'nullable|integer|min:0',
+        'description' => 'nullable|string|max:1000',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'code' => 422,
+            'error' => $validator->errors(),
+        ], 422);
+    }
+
+    $validated = $validator->validated();
+
+    if ($req->hasFile('image')) {
+        if ($user->image && Storage::exists($user->image)) {
+            Storage::delete($user->image);
+        }
+
+        $path = $req->file('image')->store('public/user_images');
+        $validated['image'] = $path;
+    }
+
+    $user->update($validated);
+
+    return response()->json([
+        'code' => 200,
+        'message' => 'Profile updated successfully',
+        'user' => [
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'age' => $user->age,
+            'location' => $user->location,
+            'description' => $user->description,
+            'image' => $user->image ? asset(Storage::url($user->image)) : null,
+        ],
+    ], 200);
+}
+
 }
