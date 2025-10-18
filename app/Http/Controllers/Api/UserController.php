@@ -117,7 +117,7 @@ class UserController extends Controller
                 'error' => "not authorized"
             ], 200);
         }
-        $validated = Validator::make($req->all(), [
+        $validator = Validator::make($req->all(), [
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
@@ -125,6 +125,15 @@ class UserController extends Controller
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 422,
+                'error' => $validator->errors()
+            ], 422);
+        }
+
+        $validated = $validator->validated();
 
         if ($req->hasFile('image')) {
             if ($user->image && Storage::exists($user->image)) {
