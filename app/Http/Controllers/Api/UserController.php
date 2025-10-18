@@ -117,7 +117,9 @@ class UserController extends Controller
                 'error' => "not authorized"
             ], 200);
         }
-        $validated = $req->validate([
+        $validated = Validator::make($req->all(), [
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'age' => 'nullable|integer|min:0',
             'description' => 'nullable|string|max:1000',
@@ -133,8 +135,18 @@ class UserController extends Controller
         }
         $user->update($validated);
         return response()->json([
+            'code' => 200,
             'message' => 'Profile updated successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'first_name' => $user->firstName,
+                'last_name' => $user->lastName,
+                'email' => $user->email,
+                'age' => $user->age,
+                'location' => $user->location,
+                'description' => $user->description,
+                'image' => $user->image,
+            ],
         ], 200);
     }
 }
