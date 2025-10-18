@@ -152,8 +152,8 @@ public function editProfile(Request $req)
         'message' => 'Profile updated successfully',
         'user' => [
             'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
+            'first_name' => $user->firstName,
+            'last_name' => $user->lastName,
             'email' => $user->email,
             'age' => $user->age,
             'location' => $user->location,
