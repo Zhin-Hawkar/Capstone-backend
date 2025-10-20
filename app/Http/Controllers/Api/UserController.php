@@ -158,7 +158,7 @@ public function editProfile(Request $req)
             'age' => $user->age,
             'location' => $user->location,
             'description' => $user->description,
-            'image' => $user->image ? asset(Storage::url($user->image)) : null,
+            'image' => $user->image ? url(Storage::url($user->image)) : null,
         ],
     ], 200);
 }
