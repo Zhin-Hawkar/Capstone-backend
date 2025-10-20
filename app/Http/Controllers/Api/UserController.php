@@ -136,30 +136,30 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
-        // if ($req->hasFile('image')) {
-        //     if ($user->image && Storage::exists($user->image)) {
-        //         Storage::delete($user->image);
-        //     }
-
-        //     $path = $req->file('image')->store('public/user_images');
-        //     $validated['image'] = url(Storage::url($path));
-        // }
-
-        // $user->update($validated);
         if ($req->hasFile('image')) {
-            $file = $req->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-            $destinationPath = public_path('user_images');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
+            if ($user->image && Storage::exists($user->image)) {
+                Storage::delete($user->image);
             }
 
-            $file->move($destinationPath, $filename);
-            $validated['image'] = 'user_images/' . $filename;
+            $path = $req->file('image')->store('public/user_images');
+            $validated['image'] = url(Storage::url($path));
         }
 
         $user->update($validated);
+        // if ($req->hasFile('image')) {
+        //     $file = $req->file('image');
+        //     $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+        //     $destinationPath = public_path('user_images');
+        //     if (!file_exists($destinationPath)) {
+        //         mkdir($destinationPath, 0777, true);
+        //     }
+
+        //     $file->move($destinationPath, $filename);
+        //     $validated['image'] = 'user_images/' . $filename;
+        // }
+
+        // $user->update($validated);
 
 
         return response()->json([
