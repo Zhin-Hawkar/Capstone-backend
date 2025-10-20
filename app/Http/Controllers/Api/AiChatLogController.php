@@ -87,7 +87,7 @@ class AiChatLogController extends Controller
             ]);
 
 
-            $log = AiChatLog::where('email', $user->email)->first();
+            $log = AiChatLog::where('id', $chat->id)->first();
 
             return response()->json([
                 'result' => [
