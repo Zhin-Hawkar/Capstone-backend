@@ -142,7 +142,7 @@ public function editProfile(Request $req)
         }
 
         $path = $req->file('image')->store('public/user_images');
-        $validated['image'] = $path;
+        $validated['image'] = url(Storage::url($path));
     }
 
     $user->update($validated);
@@ -158,7 +158,7 @@ public function editProfile(Request $req)
             'age' => $user->age,
             'location' => $user->location,
             'description' => $user->description,
-            'image' => $user->image ? url(Storage::url($user->image)) : null,
+            'image' => $user->image ? $user->image : null,
         ],
     ], 200);
 }
