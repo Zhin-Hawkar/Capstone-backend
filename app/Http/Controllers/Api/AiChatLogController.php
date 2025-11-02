@@ -16,7 +16,6 @@ class AiChatLogController extends Controller
 
         $validator = Validator::make($request->all(), [
             'prompt' => 'required',
-            'email' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -26,9 +25,7 @@ class AiChatLogController extends Controller
         }
 
         $user = User::where('email', $request->input('email'))->first();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+
 
         $OPEN_ROUTER_ENDPOINT = env('OPENROUTER_ENDPOINT');
         $OPENROUTER_API_KEY = env('OPENROUTER_API_KEY');
@@ -75,27 +72,31 @@ class AiChatLogController extends Controller
         }
 
         try {
-            $chat = AiChatLog::create([
-                'id' => $user->id,
-                'email' => $user->email,
-                'firstName' => $user->firstName,
-                'lastName' => $user->lastName,
-                'prompt' => $prompt,
-                'response' => $aiContent,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            if ($user) {
+                $chat = AiChatLog::create([
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
+                    'prompt' => $prompt,
+                    'response' => $aiContent,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
 
-            $log = AiChatLog::where('id', $chat->id)->first();
+                $log = AiChatLog::where('id', $chat->id)->first();
+                $logs = AiChatLog::where('email', $chat->email)->get();
+            }
 
             return response()->json([
                 'result' => [
-                    'code'=>200,
+                    'code' => 200,
                     'log' => [
-                        'prompt' => $log->prompt,
-                        'response' => $log->response,
-                        'created_at' => $log->created_at,
+                        'prompt' => $log ?? $prompt,
+                        'response' => $log ?? $aiContent,
+                        'all_logs' => $logs,
+                        'created_at' => $log->created_at ?? now(),
                     ]
                 ]
             ], 200);
