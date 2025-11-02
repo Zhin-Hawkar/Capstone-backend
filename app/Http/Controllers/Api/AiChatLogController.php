@@ -48,7 +48,7 @@ class AiChatLogController extends Controller
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $OPENROUTER_API_KEY,
             'Content-Type' => 'application/json',
-            'HTTP-Referer' => 'http://127.0.0.1:8000',
+            'HTTP-Referer' => 'https://capstone-backend-inbqo.sevalla.app',
             'X-Title' => 'Healthcare Visa Assistant'
         ])->post($OPEN_ROUTER_ENDPOINT, [
             "model" => "openai/gpt-3.5-turbo",
