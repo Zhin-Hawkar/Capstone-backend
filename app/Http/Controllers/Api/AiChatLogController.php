@@ -24,7 +24,7 @@ class AiChatLogController extends Controller
             ], 422);
         }
 
-        $user = User::where('email', $request->input('email'))->first();
+        $user = User::where('email', $request->input('email'))->first() ?? null;
 
 
         $OPEN_ROUTER_ENDPOINT = env('OPENROUTER_ENDPOINT');
@@ -94,7 +94,7 @@ class AiChatLogController extends Controller
                     'code' => 200,
                     'log' => [
                         'prompt' => $log->prompt ?? $prompt,
-                        'response' => $log->prompt ?? $aiContent,
+                        'response' => $log->response ?? $aiContent,
                         'all_logs' => $logs,
                         'created_at' => $log->created_at ?? now(),
                     ]
