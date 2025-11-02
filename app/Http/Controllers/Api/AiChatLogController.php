@@ -93,8 +93,8 @@ class AiChatLogController extends Controller
                 'result' => [
                     'code' => 200,
                     'log' => [
-                        'prompt' => $log ?? $prompt,
-                        'response' => $log ?? $aiContent,
+                        'prompt' => $log->prompt ?? $prompt,
+                        'response' => $log->prompt ?? $aiContent,
                         'all_logs' => $logs,
                         'created_at' => $log->created_at ?? now(),
                     ]
