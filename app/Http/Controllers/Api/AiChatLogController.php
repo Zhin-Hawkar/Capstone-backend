@@ -74,31 +74,40 @@ class AiChatLogController extends Controller
         }
 
         try {
-            if ($user) {
-                $chat = AiChatLog::create([
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'firstName' => $user->firstName,
-                    'lastName' => $user->lastName,
-                    'prompt' => $prompt,
-                    'response' => $aiContent,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-
-                $log = AiChatLog::where('id', $chat->id)->first();
-                $logs = AiChatLog::where('email', $chat->email)->get();
+            if (!$user) {
+                return response()->json([
+                    'result' => [
+                        'code' => 200,
+                        'log' => [
+                            'prompt' => $prompt,
+                            'response' => $aiContent,
+                            'created_at' => now(),
+                        ]
+                    ]
+                ], 200);
             }
+            $chat = AiChatLog::create([
+                'id' => $user->id,
+                'email' => $user->email,
+                'firstName' => $user->firstName,
+                'lastName' => $user->lastName,
+                'prompt' => $prompt,
+                'response' => $aiContent,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
+
+            $log = AiChatLog::where('id', $chat->id)->first();
+            $logs = AiChatLog::where('email', $chat->email)->get();
             return response()->json([
                 'result' => [
                     'code' => 200,
                     'log' => [
-                        'prompt' => $log->prompt ?? $prompt,
-                        'response' => $log->prompt ?? $aiContent,
+                        'prompt' => $log->prompt,
+                        'response' => $log->prompt,
                         'all_logs' => $logs,
-                        'created_at' => $log->created_at ?? now(),
+                        'created_at' => $log->created_at,
                     ]
                 ]
             ], 200);
