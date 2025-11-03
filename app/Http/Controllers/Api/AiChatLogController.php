@@ -17,12 +17,12 @@ class AiChatLogController extends Controller
         $validator = Validator::make($request->all(), [
             'prompt' => 'required',
         ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'code' => 422,
-                'error' => $validator->errors(),
-            ], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'code' => 422,
+        //         'error' => $validator->errors(),
+        //     ], 422);
+        // }
 
         $user = User::where('email', $request->input('email'))->first() ?? null;
 
@@ -94,7 +94,7 @@ class AiChatLogController extends Controller
                     'code' => 200,
                     'log' => [
                         'prompt' => $log->prompt ?? $prompt,
-                        'response' => $log->response ?? $aiContent,
+                        'response' => $log->prompt ?? $aiContent,
                         'all_logs' => $logs,
                         'created_at' => $log->created_at ?? now(),
                     ]
