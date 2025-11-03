@@ -89,6 +89,7 @@ class UserController extends Controller
                     'location' => $user->location,
                     'description' => $user->description,
                     'image' => $user->image,
+                    'role' => $user->role,
                 ],
                 'token' => $token,
             ], 200);
