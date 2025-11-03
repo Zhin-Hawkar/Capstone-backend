@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class AiChatLogController extends Controller
 {
@@ -17,15 +19,15 @@ class AiChatLogController extends Controller
         $validator = Validator::make($request->all(), [
             'prompt' => 'required',
         ]);
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'code' => 422,
-        //         'error' => $validator->errors(),
-        //     ], 422);
-        // }
 
-        $user = User::where('email', $request->input('email'))->first() ?? null;
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 422,
+                'error' => $validator->errors(),
+            ], 422);
+        }
 
+        $user = Auth::user();
 
         $OPEN_ROUTER_ENDPOINT = env('OPENROUTER_ENDPOINT');
         $OPENROUTER_API_KEY = env('OPENROUTER_API_KEY');
