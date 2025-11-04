@@ -17,7 +17,7 @@ class MedicalRecordsController extends Controller
     public function uploadMedicalRecord(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'medicalRecord' => "required"
+            'medicalRecord' => "required|file|mimes:pdf,jpeg|max:20480"
         ]);
 
         if ($validator->fails()) {
