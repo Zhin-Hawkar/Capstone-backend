@@ -50,4 +50,18 @@ class MedicalRecordsController extends Controller
             'record' => $record,
         ], 200);
     }
+
+    public function showMedicalRecords()
+    {
+        $user = Auth::user();
+        $record = DB::table('users')
+            ->join('medical_records', 'users.id', '=', 'medical_records.userId')
+            ->select('users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
+            ->where('users.id', $user->id)
+            ->get();
+        return response()->json([
+            'code' => 200,
+            'record' => $record,
+        ], 200);
+    }
 }
