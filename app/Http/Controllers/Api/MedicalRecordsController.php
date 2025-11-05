@@ -67,7 +67,7 @@ class MedicalRecordsController extends Controller
 
     public function deleteMedicalRecord(Request $request)
     {
-        $record = MedicalRecords::find($request->medicalRecord);
+        $record = MedicalRecords::find($request->id);
         if ($record) {
             $record->delete();
             return response()->json([
