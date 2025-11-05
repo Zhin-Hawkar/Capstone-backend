@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('firstName');
             $table->string('lastName');
-            $table->String('specialty');
-            $table->string('designation');
-            $table->String('medicalDegree');
+            $table->string('specialization');
+            $table->String('qualification');
             $table->string('hospital');
+            $table->string('department');
+            $table->string('description')->nullable();
+            $table->string('role');
             $table->integer('licenseId');
-            $table->date('licenseExpiry');
+            $table->integer('yearsofexperience')->nullable();
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();
