@@ -13,6 +13,7 @@ Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/uploadmedicalrecord', [MedicalRecordsController::class, 'uploadMedicalRecord']);
+    Route::post('/deletemedicalrecord', [MedicalRecordsController::class, 'deleteMedicalRecord']);
     Route::get('/showmedicalrecords', [MedicalRecordsController::class, 'showMedicalRecords']);
     Route::post('/edituserprofile', [UserController::class, 'editProfile']);
 });
