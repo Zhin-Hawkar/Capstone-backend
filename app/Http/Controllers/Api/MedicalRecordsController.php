@@ -56,12 +56,24 @@ class MedicalRecordsController extends Controller
         $user = Auth::user();
         $record = DB::table('users')
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
-            ->select('users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
+            ->select('medical_records.id','users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
             ->where('users.id', $user->id)
             ->get();
         return response()->json([
             'code' => 200,
             'record' => $record,
         ], 200);
+    }
+
+    public function deleteMedicalRecord(Request $request)
+    {
+        $record = MedicalRecords::find($request->medicalRecord);
+        if ($record) {
+            $record->delete();
+            return response()->json([
+                "code" => 200,
+                "msg" => "record deleted",
+            ]);
+        }
     }
 }
