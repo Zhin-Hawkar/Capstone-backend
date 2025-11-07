@@ -36,8 +36,13 @@ class NewAppointmentRequest implements ShouldBroadcast
         return new PrivateChannel('doctor.' . $this->doctorId);
     }
 
-    public function broadcastAs()
+  public function broadcastWith()
     {
-        return 'appointment.request';
+        return [
+            'id' => $this->appointment->id,
+            'patient_name' => $this->appointment->firstName,
+            'status' => $this->appointment->status,
+            'time' => $this->appointment->date_time,
+        ];
     }
 }
