@@ -48,9 +48,9 @@ class HospitalController extends Controller
             'location' => $req->location,
             'type' => $req->type,
             'phoneNumber' => $req->phoneNumber,
-            'departments' => $req->departments,
+            'departments' => json_encode($req->departments),
             'workingHours' => $req->workingHours,
-            'services' => $req->services,
+            'services' => json_encode($req->services),
             'numberOfBeds' => $req->numberOfBeds,
             'description' => $req->description,
             'role' => "hospital",
@@ -88,10 +88,10 @@ class HospitalController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'type' => 'nullable|string|max:255',
             'phoneNumber' => 'nullable|string|max:255',
-            'departments' => 'nullable|string|max:255',
+            'departments' => 'nullable',
             'workingHours' => 'nullable|integer|min:0',
             'numberOfBeds' => 'nullable|integer|min:0',
-            'services' => 'nullable|string|max:255',
+            'services' => 'nullable',
         ]);
 
         if ($validator->fails()) {

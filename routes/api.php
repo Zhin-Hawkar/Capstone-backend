@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AiChatLogController;
 use App\Http\Controllers\Api\MedicalRecordsController;
+use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
+Route::post('/sendappointment', [AppointmentController::class, 'sendAppointment']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);

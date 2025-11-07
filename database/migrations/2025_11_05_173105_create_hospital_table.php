@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('type');
             $table->string('phoneNumber');
             $table->string('website')->nullable();
-            $table->string('departments');
+            $table->json('departments');
             $table->integer('workingHours');
             $table->string('description');
-            $table->string('services');
+            $table->json('services');
             $table->string('role');
             $table->integer('numberOfBeds');//number of beds
             $table->string('image')->nullable();

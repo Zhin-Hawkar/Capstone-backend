@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('firstName');
             $table->string('lastName');
             $table->string('specialization');
-            $table->String('qualification');
+            $table->json('qualification');
             $table->string('hospital');
             $table->string('department');
             $table->string('description')->nullable();

@@ -30,6 +30,10 @@ class Hospital extends Model
         'role',
         'password',
     ];
+    
+    protected $casts = [
+        'departments' => 'array',
+    ];
 
     protected $hidden = [
         'password',

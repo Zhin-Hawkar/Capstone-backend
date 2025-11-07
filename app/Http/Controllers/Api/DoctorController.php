@@ -41,7 +41,7 @@ class DoctorController extends Controller
             'firstName' => $req->firstName,
             'lastName' => $req->lastName,
             'specialization' => $req->specialization,
-            'qualification' => $req->qualification,
+            'qualification' => json_encode($req->qualification),
             'licenseId' => $req->licenseId,
             'department' => $req->department,
             'hospital' => $req->hospital,

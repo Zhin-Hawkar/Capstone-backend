@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Appointment;
 
 class Doctor extends Model
 {
@@ -30,6 +31,11 @@ class Doctor extends Model
         'role',
         'password',
     ];
+
+    public function appointments()
+    {
+        return $this->belongsToMany(Appointment::class);
+    }
 
     protected $hidden = [
         'password',
