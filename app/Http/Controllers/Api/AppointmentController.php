@@ -47,7 +47,7 @@ class AppointmentController extends Controller
             ->get();
 
         foreach ($doctors as $doctor) {
-            broadcast(new NewAppointmentRequest($appointment, $doctor->id))->toOthers();
+            event(new NewAppointmentRequest($appointment, $doctor->id));
         }
 
         return response()->json([
