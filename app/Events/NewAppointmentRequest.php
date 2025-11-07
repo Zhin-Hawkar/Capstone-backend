@@ -42,5 +42,8 @@ class NewAppointmentRequest implements ShouldBroadcast
             'time' => $this->appointment->date_time,
         ];
     }
-
+  public function broadcastAs()
+    {
+        return "doctor-event";
+    }
 }
