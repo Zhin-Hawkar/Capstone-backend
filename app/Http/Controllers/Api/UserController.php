@@ -98,7 +98,7 @@ class UserController extends Controller
                 ], 200);
             }
 
-            if (!$doctor || !Hash::check($req->password, $user->password)) {
+            if (!$doctor || !Hash::check($req->password, $doctor->password)) {
                 return response()->json([
                     'code' => 401,
                     'error' => "Wrong Credentials",
