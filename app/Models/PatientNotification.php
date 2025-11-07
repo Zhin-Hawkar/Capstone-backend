@@ -11,6 +11,7 @@ class PatientNotification extends Model
     use HasFactory;
     protected $table = 'patient_notification';
     protected $fillable = [
+        'patientId',
         'firstName',
         'lastName',
         'age',

@@ -15,6 +15,7 @@ class AppointmentController extends Controller
     public function sendAppointment(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'patientId' => 'required',
             'firstName' => "required",
             'lastName' => "required",
             'age' => "required",
@@ -32,6 +33,7 @@ class AppointmentController extends Controller
         }
 
         $appointment =  Appointment::create([
+            'patientId' => $request->patientId,
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'age' => $request->age,
@@ -43,6 +45,7 @@ class AppointmentController extends Controller
         ]);
 
         PatientNotification::create([
+            'patientId' => $request->patientId,
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'age' => $request->age,
@@ -59,9 +62,6 @@ class AppointmentController extends Controller
             ->get();
 
         event(new NewAppointmentRequest($appointment, $doctors));
-
-
-
 
         return response()->json([
             'code' => 200,

@@ -16,15 +16,47 @@ class PatientNotificationController extends Controller
 {
     public function sendPatientNotification()
     {
-     $doctor = Auth::user();
+        $doctor = Auth::user();
 
-    $notification = DB::table('patient_notification')
-        ->where('department', $doctor->department)
-        ->get();
+        $notification = DB::table('patient_notification')
+            ->where('department', $doctor->department)
+            ->get();
 
         return response()->json([
             'code' => 200,
             'notification' => $notification
+        ], 200);
+    }
+    public function rejectPatientRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patientId' => 'required',
+            'comment' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 401,
+                'error' => $validator->errors(),
+            ]);
+        }
+
+        $validated = $validator->validate();
+        $doctor = Auth::user();
+
+        DB::table('patient_notification')
+            ->where('department', $doctor->department)
+            ->where('patientId', $validated['patientId'])
+            ->delete();
+
+        DB::table('appointment')
+            ->where('department', $doctor->department)
+            ->where('patientId', $validated['patientId'])
+            ->delete();
+
+        return response()->json([
+            'code' => 200,
+            'response' => 'Request rejected successfully',
         ], 200);
     }
 }
