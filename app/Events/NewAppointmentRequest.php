@@ -18,9 +18,10 @@ class NewAppointmentRequest implements ShouldBroadcast
     public $appointment;
     public $doctorId;
 
-    public function __construct($appointment)
+    public function __construct($appointment, $doctorId)
     {
         $this->appointment = $appointment;
+        $this->doctorId = $doctorId;
     }
 
     /**
@@ -30,10 +31,10 @@ class NewAppointmentRequest implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('doctor');
+        return new Channel('doctor.' . $this->doctorId);
     }
 
-  public function broadcastWith(): array
+    public function broadcastWith(): array
     {
         return [
             'id' => $this->appointment->id,
@@ -42,7 +43,7 @@ class NewAppointmentRequest implements ShouldBroadcast
             'time' => $this->appointment->date_time,
         ];
     }
-  public function broadcastAs()
+    public function broadcastAs()
     {
         return "doctor-event";
     }
