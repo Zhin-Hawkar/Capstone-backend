@@ -71,10 +71,38 @@ class UserController extends Controller
             $user = User::where('email', $req->email)->first();
             $doctor = Doctor::where('email', $req->email)->first();
             if (!$user || !Hash::check($req->password, $user->password)) {
-                return response()->json([
-                    'code' => 401,
-                    'error' => "Wrong Credentials",
-                ], 200);
+                if (!$doctor || !Hash::check($req->password, $doctor->password)) {
+                    return response()->json([
+                        'code' => 401,
+                        'error' => "Wrong Credentials",
+                    ], 200);
+                } else {
+                    $token = $doctor->createToken('api-token')->plainTextToken;
+                    $doctor->remember_token = $token;
+                    $doctor->save();
+
+                    return response()->json([
+                        'code' => 200,
+                        'message' => "User logged in Successfully",
+                        'user' => [
+                            'id' => $doctor->id,
+                            'first_name' => $doctor->firstName,
+                            'last_name' => $doctor->lastName,
+                            'specialization' => $doctor->specialization,
+                            'qualification' => $doctor->qualification,
+                            'hospital' => $doctor->hospital,
+                            'licenseId' => $doctor->licenseId,
+                            'department' => $doctor->department,
+                            'email' => $doctor->email,
+                            'age' => $doctor->age,
+                            'location' => $doctor->location,
+                            'description' => $doctor->description,
+                            'image' => $doctor->image,
+                            'role' => $doctor->role,
+                        ],
+                        'token' => $token,
+                    ], 200);
+                }
             } else {
                 $token = $user->createToken('api-token')->plainTextToken;
                 $user->remember_token = $token;
@@ -93,39 +121,6 @@ class UserController extends Controller
                         'description' => $user->description,
                         'image' => $user->image,
                         'role' => $user->role,
-                    ],
-                    'token' => $token,
-                ], 200);
-            }
-
-            if (!$doctor || !Hash::check($req->password, $doctor->password)) {
-                return response()->json([
-                    'code' => 401,
-                    'error' => "Wrong Credentials",
-                ], 200);
-            } else {
-                $token = $doctor->createToken('api-token')->plainTextToken;
-                $doctor->remember_token = $token;
-                $doctor->save();
-
-                return response()->json([
-                    'code' => 200,
-                    'message' => "User logged in Successfully",
-                    'user' => [
-                        'id' => $doctor->id,
-                        'first_name' => $doctor->firstName,
-                        'last_name' => $doctor->lastName,
-                        'specialization' => $doctor->specialization,
-                        'qualification' => $doctor->qualification,
-                        'hospital' => $doctor->hospital,
-                        'licenseId' => $doctor->licenseId,
-                        'department' => $doctor->department,
-                        'email' => $doctor->email,
-                        'age' => $doctor->age,
-                        'location' => $doctor->location,
-                        'description' => $doctor->description,
-                        'image' => $doctor->image,
-                        'role' => $doctor->role,
                     ],
                     'token' => $token,
                 ], 200);
