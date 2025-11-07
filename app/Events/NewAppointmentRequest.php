@@ -16,12 +16,12 @@ class NewAppointmentRequest implements ShouldBroadcast
      * Create a new event instance.
      */
     public $appointment;
-    public $doctorId;
+    public $doctor;
 
-    public function __construct($appointment, $doctorId)
+    public function __construct($appointment, $doctor)
     {
         $this->appointment = $appointment;
-        $this->doctorId = $doctorId;
+        $this->doctor = $doctor;
     }
 
     /**
@@ -41,6 +41,7 @@ class NewAppointmentRequest implements ShouldBroadcast
             'patient_name' => $this->appointment->firstName,
             'status' => $this->appointment->status,
             'time' => $this->appointment->date_time,
+            'doctor' => $this->doctor
         ];
     }
     public function broadcastAs()
