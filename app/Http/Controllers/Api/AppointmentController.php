@@ -46,9 +46,8 @@ class AppointmentController extends Controller
             ->select("doctor.*")
             ->get();
 
-        foreach ($doctors as $doctor) {
-            event(new NewAppointmentRequest($appointment, $doctor->id));
-        }
+            event(new NewAppointmentRequest($appointment));
+        
 
         return response()->json([
             'code' => 200,
