@@ -31,7 +31,7 @@ class NewAppointmentRequest implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('doctor.' . $this->doctorId);
+        return new Channel('doctor');
     }
 
     public function broadcastWith(): array
