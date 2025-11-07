@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\NewAppointmentRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\PatientNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,17 @@ class AppointmentController extends Controller
         }
 
         $appointment =  Appointment::create([
+            'firstName' => $request->firstName,
+            'lastName' => $request->lastName,
+            'age' => $request->age,
+            'gender' => $request->gender,
+            'email' => $request->email,
+            'department' => $request->department,
+            'help' => $request->help,
+            'date_time' => $request->date_time,
+        ]);
+
+        PatientNotification::create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'age' => $request->age,

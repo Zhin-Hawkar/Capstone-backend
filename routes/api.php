@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AiChatLogController;
 use App\Http\Controllers\Api\MedicalRecordsController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\PatientNotificationController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/deletemedicalrecord', [MedicalRecordsController::class, 'deleteMedicalRecord']);
     Route::post('/editdoctorprofile', [DoctorController::class, 'editDoctorProfile']);
     Route::post('/edithospitalprofile', [HospitalController::class, 'editHospitalProfile']);
+    Route::get('/sendpatientnotification', [PatientNotificationController::class, 'sendPatientNotification']);
     Route::post('/deletedoctor', [DoctorController::class, 'deleteDoctor']);
     Route::get('/showmedicalrecords', [MedicalRecordsController::class, 'showMedicalRecords']);
     Route::post('/edituserprofile', [UserController::class, 'editProfile']);
