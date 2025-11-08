@@ -171,6 +171,7 @@ class PatientNotificationController extends Controller
 
                 DB::table('appointment')
                     ->where('patientId', $validated['patientId'])
+                    ->where("doctorId", $validated["doctorId"])
                     ->update([
                         'status' => 'accepted',
                     ]);
