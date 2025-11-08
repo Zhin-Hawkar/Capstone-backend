@@ -90,6 +90,7 @@ class PatientNotificationController extends Controller
                     'age' => $doctor->age,
                     'email' => $doctor->email,
                     'department' => $doctor->department,
+                    'status' => "rejected",
                     'comment' => $request->comment,
                     'date_time' => $notification->date_time,
                 ]);
@@ -165,6 +166,7 @@ class PatientNotificationController extends Controller
                     'age' => $doctor->age,
                     'email' => $doctor->email,
                     'department' => $doctor->department,
+                    'status' => "accepted",
                     'comment' => $request->comment,
                     'date_time' => $notification->date_time,
                 ]);
