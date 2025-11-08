@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\NewDoctorNotification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Models\AiChatLog;
@@ -43,144 +44,143 @@ class PatientNotificationController extends Controller
     }
 
 
-   public function rejectPatientRequest(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'doctorId' => 'required',
-        'patientId' => 'required',
-        'comment' => 'required',
-    ]);
+    public function rejectPatientRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'doctorId' => 'required',
+            'patientId' => 'required',
+            'comment' => 'required',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'code' => 401,
-            'error' => $validator->errors(),
-        ], 401);
-    }
-
-    $validated = $validator->validate();
-
-    try {
-        // Fetch doctor safely
-        $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
-        if (!$doctor) {
+        if ($validator->fails()) {
             return response()->json([
-                'code' => 404,
-                'error' => 'Doctor not found.',
-            ], 404);
+                'code' => 401,
+                'error' => $validator->errors(),
+            ], 401);
         }
 
-        // Fetch patient notification safely
-        $notification = DB::table('patient_notification')
-            ->where('patientId', $validated['patientId'])
-            ->first();
-        if (!$notification) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Patient notification not found.',
-            ], 404);
-        }
+        $validated = $validator->validate();
 
-        // Wrap DB operations in a transaction
-        DB::transaction(function () use ($doctor, $notification, $validated, $request) {
-            DB::table('doctor_notification')->insert([
-                'patientId' => $validated['patientId'],
-                'firstName' => $doctor->firstName,
-                'lastName' => $doctor->lastName,
-                'age' => $doctor->age,
-                'email' => $doctor->email,
-                'department' => $doctor->department,
-                'comment' => $request->comment,
-                'date_time' => $notification->date_time,
-            ]);
+        try {
+            $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
+            if (!$doctor) {
+                return response()->json([
+                    'code' => 404,
+                    'error' => 'Doctor not found.',
+                ], 404);
+            }
 
-            DB::table('patient_notification')
+            $notification = DB::table('patient_notification')
                 ->where('patientId', $validated['patientId'])
-                ->delete();
+                ->first();
+            if (!$notification) {
+                return response()->json([
+                    'code' => 404,
+                    'error' => 'Patient notification not found.',
+                ], 404);
+            }
 
-            DB::table('appointment')
-                ->where('patientId', $validated['patientId'])
-                ->update(['status' => 'rejected']);
-        });
+            DB::transaction(function () use ($doctor, $notification, $validated, $request) {
+                DB::table('doctor_notification')->insert([
+                    'patientId' => $validated['patientId'],
+                    'firstName' => $doctor->firstName,
+                    'lastName' => $doctor->lastName,
+                    'age' => $doctor->age,
+                    'email' => $doctor->email,
+                    'department' => $doctor->department,
+                    'comment' => $request->comment,
+                    'date_time' => $notification->date_time,
+                ]);
 
-        return response()->json([
-            'code' => 200,
-            'response' => 'Request rejected successfully',
-        ], 200);
+                DB::table('patient_notification')
+                    ->where('patientId', $validated['patientId'])
+                    ->delete();
 
-    } catch (\Exception $e) {
-        // Catch any unexpected errors
-        return response()->json([
-            'code' => 500,
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
+                DB::table('appointment')
+                    ->where('patientId', $validated['patientId'])
+                    ->update(['status' => 'rejected']);
+            });
 
-public function acceptPatientRequest(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'doctorId' => 'required',
-        'patientId' => 'required',
-        'comment' => 'required',
-    ]);
+            event(new NewDoctorNotification($doctor));
 
-    if ($validator->fails()) {
-        return response()->json([
-            'code' => 401,
-            'error' => $validator->errors(),
-        ], 401);
-    }
-
-    $validated = $validator->validate();
-
-    try {
-        $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
-        if (!$doctor) {
             return response()->json([
-                'code' => 404,
-                'error' => 'Doctor not found.',
-            ], 404);
+                'code' => 200,
+                'doctor' => $doctor,
+                'response' => 'Request rejected successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function acceptPatientRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'doctorId' => 'required',
+            'patientId' => 'required',
+            'comment' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 401,
+                'error' => $validator->errors(),
+            ], 401);
         }
 
-        $notification = DB::table('patient_notification')
-            ->where('patientId', $validated['patientId'])
-            ->first();
-        if (!$notification) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Patient notification not found.',
-            ], 404);
-        }
+        $validated = $validator->validate();
 
-        DB::transaction(function () use ($doctor, $notification, $validated, $request) {
-            DB::table('doctor_notification')->insert([
-                'patientId' => $validated['patientId'],
-                'firstName' => $doctor->firstName,
-                'lastName' => $doctor->lastName,
-                'age' => $doctor->age,
-                'email' => $doctor->email,
-                'department' => $doctor->department,
-                'comment' => $request->comment,
-                'date_time' => $notification->date_time,
-            ]);
+        try {
+            $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
+            if (!$doctor) {
+                return response()->json([
+                    'code' => 404,
+                    'error' => 'Doctor not found.',
+                ], 404);
+            }
 
-            DB::table('appointment')
+            $notification = DB::table('patient_notification')
                 ->where('patientId', $validated['patientId'])
-                ->update(['status' => 'accepted']);
-        });
+                ->first();
+            if (!$notification) {
+                return response()->json([
+                    'code' => 404,
+                    'error' => 'Patient notification not found.',
+                ], 404);
+            }
 
-        return response()->json([
-            'code' => 200,
-            'response' => 'Request accepted successfully',
-        ], 200);
+            DB::transaction(function () use ($doctor, $notification, $validated, $request) {
+                DB::table('doctor_notification')->insert([
+                    'patientId' => $validated['patientId'],
+                    'firstName' => $doctor->firstName,
+                    'lastName' => $doctor->lastName,
+                    'age' => $doctor->age,
+                    'email' => $doctor->email,
+                    'department' => $doctor->department,
+                    'comment' => $request->comment,
+                    'date_time' => $notification->date_time,
+                ]);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'code' => 500,
-            'error' => $e->getMessage(),
-        ], 500);
+                DB::table('appointment')
+                    ->where('patientId', $validated['patientId'])
+                    ->update(['status' => 'accepted']);
+            });
+
+            event(new NewDoctorNotification($doctor));
+
+            return response()->json([
+                'code' => 200,
+                'doctor' => $doctor,
+                'response' => 'Request accepted successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
-}
-
 }
