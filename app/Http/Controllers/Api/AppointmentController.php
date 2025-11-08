@@ -20,7 +20,7 @@ class AppointmentController extends Controller
             'lastName' => "required",
             'age' => "required",
             'gender' => "required",
-            'email' => 'required|email|',
+            'email' => 'required|email',
             'department' => "required",
             'help' => "required",
             'date_time' => "required",
@@ -28,13 +28,14 @@ class AppointmentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'code' => 401,
                 'error' => $validator->errors(),
-            ]);
+            ], 401);
         }
 
-        $appointment =  Appointment::create([
+        $appointment = Appointment::create([
             'patientId' => $request->patientId,
-            'doctorId' => "",
+            'doctorId' => null,
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'age' => $request->age,
@@ -43,13 +44,19 @@ class AppointmentController extends Controller
             'department' => $request->department,
             'help' => $request->help,
             'date_time' => $request->date_time,
+            'status' => 'pending',
         ]);
 
-
         $doctors = DB::table("doctor")
-            ->join("appointment", "appointment.department", "doctor.department")
-            ->select("doctor.*")
+            ->where("department", $request->department)
             ->get();
+
+        if ($doctors->isEmpty()) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'No doctors found in this department.',
+            ], 404);
+        }
 
         foreach ($doctors as $doctor) {
             PatientNotification::create([
@@ -70,10 +77,13 @@ class AppointmentController extends Controller
 
         return response()->json([
             'code' => 200,
+            'message' => 'Appointment sent successfully.',
             'appointment' => $appointment,
-            "doctor" => $doctors,
+            'notifiedDoctorsCount' => count($doctors),
+            'doctors' => $doctors,
         ], 200);
     }
+
 
     public function acceptDoctorRequest(Request $request)
     {
