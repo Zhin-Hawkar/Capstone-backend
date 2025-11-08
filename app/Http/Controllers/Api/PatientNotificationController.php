@@ -78,7 +78,6 @@ class PatientNotificationController extends Controller
             'firstName' => $doctor->firstName,
             'lastName' => $doctor->lastName,
             'age' => $doctor->age,
-            'gender' => $doctor->gender,
             'email' => $doctor->email,
             'department' => $doctor->department,
             'comment' => $request->comment,
