@@ -62,7 +62,7 @@ class PatientNotificationController extends Controller
 
     try {
         // Fetch doctor safely
-        $doctor = DB::table('doctors')->where('id', $validated['doctorId'])->first();
+        $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
         if (!$doctor) {
             return response()->json([
                 'code' => 404,
@@ -135,7 +135,7 @@ public function acceptPatientRequest(Request $request)
     $validated = $validator->validate();
 
     try {
-        $doctor = DB::table('doctors')->where('id', $validated['doctorId'])->first();
+        $doctor = DB::table('doctor')->where('id', $validated['doctorId'])->first();
         if (!$doctor) {
             return response()->json([
                 'code' => 404,
