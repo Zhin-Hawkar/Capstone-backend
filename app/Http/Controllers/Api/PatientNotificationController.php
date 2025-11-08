@@ -73,6 +73,7 @@ class PatientNotificationController extends Controller
 
             $notification = DB::table('patient_notification')
                 ->where('patientId', $validated['patientId'])
+                ->where("doctorId", $validated["doctorId"])
                 ->first();
             if (!$notification) {
                 return response()->json([
@@ -100,6 +101,7 @@ class PatientNotificationController extends Controller
 
                 DB::table('appointment')
                     ->where('patientId', $validated['patientId'])
+                    ->where("doctorId", $validated["doctorId"])
                     ->update(['status' => 'rejected']);
             });
 
@@ -146,6 +148,7 @@ class PatientNotificationController extends Controller
 
             $notification = DB::table('patient_notification')
                 ->where('patientId', $validated['patientId'])
+                ->where("doctorId", $validated["doctorId"])
                 ->first();
             if (!$notification) {
                 return response()->json([
@@ -170,7 +173,6 @@ class PatientNotificationController extends Controller
                     ->where('patientId', $validated['patientId'])
                     ->update([
                         'status' => 'accepted',
-                        'doctorId' => $validated['doctorId']
                     ]);
             });
 
