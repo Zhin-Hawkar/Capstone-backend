@@ -70,7 +70,7 @@ class AppointmentController extends Controller
                 ]);
             }
 
-            $appointments = DB::table("appointment")->where("patientId", $validated["patientId"]);
+            $appointments = DB::table("appointment")->where("patientId", $validated["patientId"])->get();
             foreach ($appointments as $appointment) {
                 event(new NewAppointmentRequest($appointment, $appointment->patientId));
             }
