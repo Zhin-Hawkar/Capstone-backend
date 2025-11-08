@@ -42,15 +42,12 @@ class PatientNotificationController extends Controller
         }
 
         $validated = $validator->validate();
-        $doctor = Auth::user();
 
         DB::table('patient_notification')
-            ->where('department', $doctor->department)
             ->where('patientId', $validated['patientId'])
             ->delete();
 
         DB::table('appointment')
-            ->where('department', $doctor->department)
             ->where('patientId', $validated['patientId'])
             ->delete();
 
