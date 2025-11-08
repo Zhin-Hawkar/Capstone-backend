@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('appointment', function (Blueprint $table) {
             $table->id();
-            $table->string("firstName");
-            $table->string("lastName");
-            $table->integer("age");
-            $table->string("gender");
+            $table->string("firstName")->nullable();
+            $table->string("lastName")->nullable();
+            $table->integer("age")->nullable();
+            $table->string("gender")->nullable();
             $table->string('email')->unique();
-            $table->string("department");
-            $table->string("help");
+            $table->string("department")->nullable();
+            $table->string("help")->nullable();
             $table->string("medical_record")->nullable();
-            $table->dateTime("date_time");
+            $table->dateTime("date_time")->nullable();
             $table->string("status")->default("pending");
             $table->timestamps();
         });
