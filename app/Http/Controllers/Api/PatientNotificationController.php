@@ -21,6 +21,7 @@ class PatientNotificationController extends Controller
 
         $notification = DB::table('patient_notification')
             ->where('department', $doctor->department)
+            ->where("doctorId", $doctor->id)
             ->get();
 
         return response()->json([
