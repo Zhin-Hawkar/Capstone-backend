@@ -65,9 +65,23 @@ class PatientNotificationController extends Controller
             ->where('id', $request->doctorId)
             ->first();
 
+        if (!$doctor) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Doctor not found.',
+            ]);
+        }
+
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
             ->first();
+
+        if (!$notification) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Patient notification not found.',
+            ]);
+        }
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
@@ -115,9 +129,23 @@ class PatientNotificationController extends Controller
             ->where('id', $request->doctorId)
             ->first();
 
+        if (!$doctor) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Doctor not found.',
+            ]);
+        }
+
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
             ->first();
+
+        if (!$notification) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Patient notification not found.',
+            ]);
+        }
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
