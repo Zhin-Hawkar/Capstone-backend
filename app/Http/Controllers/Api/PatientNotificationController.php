@@ -166,14 +166,16 @@ class PatientNotificationController extends Controller
 
                 DB::table('appointment')
                     ->where('patientId', $validated['patientId'])
-                    ->update(['status' => 'accepted']);
+                    ->update([
+                        'status' => 'accepted',
+                        'doctorId' => $validated['doctorId']
+                    ]);
             });
 
             event(new NewDoctorNotification($doctor));
 
             return response()->json([
                 'code' => 200,
-                'doctor' => $doctor,
                 'response' => 'Request accepted successfully',
             ], 200);
         } catch (\Exception $e) {

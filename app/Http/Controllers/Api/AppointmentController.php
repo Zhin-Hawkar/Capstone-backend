@@ -34,6 +34,7 @@ class AppointmentController extends Controller
 
         $appointment =  Appointment::create([
             'patientId' => $request->patientId,
+            'doctorId' => "",
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'age' => $request->age,
@@ -68,5 +69,59 @@ class AppointmentController extends Controller
             'appointment' => $appointment,
             "doctor" => $doctors,
         ], 200);
+    }
+
+    public function acceptDoctorRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patientId' => "required",
+            'doctorId' => "required",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 401,
+                'error' => $validator->errors(),
+            ]);
+        }
+
+        $validated = $validator->validate();
+
+        $doctor = DB::table("doctor")->where("id", $validated["doctorId"])->first();
+
+        $appointment = DB::table('appointment')
+            ->where('patientId', $validated['patientId'])
+            ->where('doctorId', $validated['doctorId'])
+            ->first();
+
+        if ($appointment) {
+            DB::table('accepted_appointment')->insert([
+                'patientId'   => $appointment->patientId,
+                'doctorId'    => $appointment->doctorId,
+                'firstName'    => $appointment->firstName,
+                'lastName'    => $appointment->lastName,
+                'doctorFirstName'    => $doctor->firstName,
+                'doctorLastName'    => $doctor->lastName,
+                'age'    => $appointment->age,
+                'gender'    => $appointment->gender,
+                'email'    => $appointment->email,
+                'department'    => $appointment->department,
+                'help'    => $appointment->help,
+                'medical_record'    => $appointment->medical_record,
+                'date_time'   => $appointment->date_time ?? null,
+                'status'      => $appointment->status,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+
+            DB::table('appointment')
+                ->where('patientId', $validated['patientId'])
+                ->delete();
+        } else {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Appointment not found.',
+            ], 404);
+        }
     }
 }
