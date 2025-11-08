@@ -73,7 +73,7 @@ class PatientNotificationController extends Controller
         // }
 
         $notification = DB::table('patient_notification')
-            ->where('patientId', $request->patientId)
+            ->where('patientId', $validated['patientId'])
             ->first();
 
         if (!$notification) {
@@ -133,7 +133,7 @@ class PatientNotificationController extends Controller
         // }
 
         $notification = DB::table('patient_notification')
-            ->where('patientId', $request->patientId)
+            ->where('patientId', $validated['patientId'])
             ->first();
 
         if (!$notification) {
