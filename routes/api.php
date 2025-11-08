@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
 Route::post('/sendappointment', [AppointmentController::class, 'sendAppointment']);
+Route::post('/acceptdoctorrequest', [AppointmentController::class, 'acceptDoctorRequest']);
 Route::post('/rejectpatientrequest', [PatientNotificationController::class, 'rejectPatientRequest']);
 Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
 Route::post('/register', [UserController::class, 'register']);
