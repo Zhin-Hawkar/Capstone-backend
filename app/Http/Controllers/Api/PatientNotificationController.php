@@ -46,6 +46,7 @@ class PatientNotificationController extends Controller
     public function rejectPatientRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'doctorId' => 'required',
             'patientId' => 'required',
             'comment' => 'required',
         ]);
@@ -60,18 +61,13 @@ class PatientNotificationController extends Controller
         $validated = $validator->validate();
 
 
-        $doctor = Auth::user();
+        $doctor = DB::table('doctor')
+            ->where('id', $request->doctorId)
+            ->first();
 
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
             ->first();
-
-        if (!$notification) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Patient notification not found.',
-            ]);
-        }
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
@@ -102,6 +98,7 @@ class PatientNotificationController extends Controller
     public function acceptPatientRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'doctorId' => 'required',
             'patientId' => 'required',
             'comment' => 'required',
         ]);
@@ -114,18 +111,13 @@ class PatientNotificationController extends Controller
         }
 
         $validated = $validator->validate();
-        $doctor = Auth::user();
+        $doctor = DB::table('doctor')
+            ->where('id', $request->doctorId)
+            ->first();
 
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
             ->first();
-
-        if (!$notification) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Patient notification not found.',
-            ]);
-        }
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
