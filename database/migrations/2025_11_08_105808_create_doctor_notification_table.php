@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string("department");
             $table->string("hospital");
             $table->string("specialization");
+            $table->string("comment");
             $table->json("qualification");
             $table->dateTime("date_time");
             $table->string("status")->default("pending");

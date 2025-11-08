@@ -30,10 +30,10 @@ class PatientNotificationController extends Controller
 
     public function sendDoctorNotification()
     {
-        $doctor = Auth::user();
+        $user = Auth::user();
 
         $notification = DB::table('doctor_notification')
-            ->where('department', $doctor->department)
+            ->where('department', $user->department)
             ->get();
 
         return response()->json([
@@ -58,6 +58,32 @@ class PatientNotificationController extends Controller
         }
 
         $validated = $validator->validate();
+
+
+        $doctor = Auth::user();
+
+        $notification = DB::table('patient_notification')
+            ->where('patientId', $request->patientId)
+            ->first();
+
+        if (!$notification) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Patient notification not found.',
+            ]);
+        }
+
+        DB::table('doctor_notification')->insert([
+            'patientId' => $request->patientId,
+            'firstName' => $doctor->firstName,
+            'lastName' => $doctor->lastName,
+            'age' => $doctor->age,
+            'gender' => $doctor->gender,
+            'email' => $doctor->email,
+            'department' => $doctor->department,
+            'comment' => $request->comment,
+            'date_time' => $notification->date_time,
+        ]);
 
         DB::table('patient_notification')
             ->where('patientId', $validated['patientId'])
@@ -89,7 +115,30 @@ class PatientNotificationController extends Controller
         }
 
         $validated = $validator->validate();
+        $doctor = Auth::user();
 
+        $notification = DB::table('patient_notification')
+            ->where('patientId', $request->patientId)
+            ->first();
+
+        if (!$notification) {
+            return response()->json([
+                'code' => 404,
+                'error' => 'Patient notification not found.',
+            ]);
+        }
+
+        DB::table('doctor_notification')->insert([
+            'patientId' => $request->patientId,
+            'firstName' => $doctor->firstName,
+            'lastName' => $doctor->lastName,
+            'age' => $doctor->age,
+            'gender' => $doctor->gender,
+            'email' => $doctor->email,
+            'department' => $doctor->department,
+            'comment' => $request->comment,
+            'date_time' => $notification->date_time,
+        ]);
 
 
         DB::table('appointment')
