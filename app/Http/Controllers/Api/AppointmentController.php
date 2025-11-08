@@ -45,22 +45,26 @@ class AppointmentController extends Controller
             'date_time' => $request->date_time,
         ]);
 
-        PatientNotification::create([
-            'patientId' => $request->patientId,
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'age' => $request->age,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'department' => $request->department,
-            'help' => $request->help,
-            'date_time' => $request->date_time,
-        ]);
 
         $doctors = DB::table("doctor")
             ->join("appointment", "appointment.department", "doctor.department")
             ->select("doctor.*")
             ->get();
+
+        foreach ($doctors as $doctor) {
+            PatientNotification::create([
+                'patientId' => $request->patientId,
+                'doctorId' => $doctor->id,
+                'firstName' => $request->firstName,
+                'lastName' => $request->lastName,
+                'age' => $request->age,
+                'gender' => $request->gender,
+                'email' => $request->email,
+                'department' => $request->department,
+                'help' => $request->help,
+                'date_time' => $request->date_time,
+            ]);
+        }
 
         event(new NewAppointmentRequest($appointment, $doctors));
 

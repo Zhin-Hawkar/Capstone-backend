@@ -35,6 +35,7 @@ class PatientNotificationController extends Controller
 
         $notification = DB::table('doctor_notification')
             ->where('department', $user->department)
+            ->where("patientId", $user->id)
             ->get();
 
         return response()->json([
@@ -94,6 +95,7 @@ class PatientNotificationController extends Controller
 
                 DB::table('patient_notification')
                     ->where('patientId', $validated['patientId'])
+                    ->where("doctorId", $validated['doctorId'])
                     ->delete();
 
                 DB::table('appointment')
