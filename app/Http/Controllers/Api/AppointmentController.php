@@ -36,18 +36,7 @@ class AppointmentController extends Controller
 
             $validated = $validator->validated();
 
-            $appointment = Appointment::create([
-                'patientId' => $validated['patientId'],
-                'doctorId' => null,
-                'firstName' => $validated['firstName'],
-                'lastName' => $validated['lastName'],
-                'age' => $validated['age'],
-                'gender' => $validated['gender'],
-                'email' => $validated['email'],
-                'department' => $validated['department'],
-                'help' => $validated['help'],
-                'date_time' => $validated['date_time'],
-            ]);
+
 
             $doctors = DB::table("doctor")
                 ->where("department", $validated["department"])
@@ -59,7 +48,20 @@ class AppointmentController extends Controller
                     'doctorId' => $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
-                    'age' => $validated['age'], 
+                    'age' => $validated['age'],
+                    'gender' => $validated['gender'],
+                    'email' => $validated['email'],
+                    'department' => $validated['department'],
+                    'help' => $validated['help'],
+                    'date_time' => $validated['date_time'],
+                ]);
+
+                Appointment::create([
+                    'patientId' => $validated['patientId'],
+                    'doctorId' => $doctor->id,
+                    'firstName' => $validated['firstName'],
+                    'lastName' => $validated['lastName'],
+                    'age' => $validated['age'],
                     'gender' => $validated['gender'],
                     'email' => $validated['email'],
                     'department' => $validated['department'],
@@ -68,7 +70,10 @@ class AppointmentController extends Controller
                 ]);
             }
 
-            event(new NewAppointmentRequest($appointment, $doctors));
+            $appointments = DB::table("appointment")->where("patientId", $validated["patientId"]);
+            foreach ($appointments as $appointment) {
+                event(new NewAppointmentRequest($appointment, $appointment->patientId));
+            }
 
             return response()->json([
                 'code' => 200,
