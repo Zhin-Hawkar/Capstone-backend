@@ -12,6 +12,7 @@ class PatientNotification extends Model
     protected $table = 'patient_notification';
     protected $fillable = [
         'patientId',
+        'doctorId',
         'firstName',
         'lastName',
         'age',
