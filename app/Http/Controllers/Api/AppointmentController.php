@@ -38,7 +38,7 @@ class AppointmentController extends Controller
 
             $appointment = Appointment::create([
                 'patientId' => $validated['patientId'],
-                'doctorId' => "",
+                'doctorId' => null,
                 'firstName' => $validated['firstName'],
                 'lastName' => $validated['lastName'],
                 'age' => $validated['age'],
@@ -59,7 +59,7 @@ class AppointmentController extends Controller
                     'doctorId' => $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
-                    'age' => $validated['age'],
+                    'age' => $validated['age'], 
                     'gender' => $validated['gender'],
                     'email' => $validated['email'],
                     'department' => $validated['department'],
