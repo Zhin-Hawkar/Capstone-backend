@@ -61,16 +61,16 @@ class PatientNotificationController extends Controller
         $validated = $validator->validate();
 
 
-        $doctor = DB::table('doctor')
-            ->where('id', $request->doctorId)
-            ->first();
+        // $doctor = DB::table('doctor')
+        //     ->where('id', $request->doctorId)
+        //     ->first();
 
-        if (!$doctor) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Doctor not found.',
-            ]);
-        }
+        // if (!$doctor) {
+        //     return response()->json([
+        //         'code' => 404,
+        //         'error' => 'Doctor not found.',
+        //     ]);
+        // }
 
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
@@ -85,13 +85,8 @@ class PatientNotificationController extends Controller
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
-            'firstName' => $doctor->firstName,
-            'lastName' => $doctor->lastName,
-            'age' => $doctor->age,
-            'email' => $doctor->email,
-            'department' => $doctor->department,
             'comment' => $request->comment,
-            // 'date_time' => $notification->date_time,
+            'date_time' => $notification->date_time,
         ]);
 
         DB::table('patient_notification')
@@ -125,16 +120,16 @@ class PatientNotificationController extends Controller
         }
 
         $validated = $validator->validate();
-        $doctor = DB::table('doctor')
-            ->where('id', $request->doctorId)
-            ->first();
+        // $doctor = DB::table('doctor')
+        //     ->where('id', $request->doctorId)
+        //     ->first();
 
-        if (!$doctor) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'Doctor not found.',
-            ]);
-        }
+        // if (!$doctor) {
+        //     return response()->json([
+        //         'code' => 404,
+        //         'error' => 'Doctor not found.',
+        //     ]);
+        // }
 
         $notification = DB::table('patient_notification')
             ->where('patientId', $request->patientId)
@@ -149,13 +144,8 @@ class PatientNotificationController extends Controller
 
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
-            'firstName' => $doctor->firstName,
-            'lastName' => $doctor->lastName,
-            'age' => $doctor->age,
-            'email' => $doctor->email,
-            'department' => $doctor->department,
             'comment' => $request->comment,
-            // 'date_time' => $notification->date_time,
+            'date_time' => $notification->date_time,
         ]);
 
 
