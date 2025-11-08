@@ -91,7 +91,7 @@ class PatientNotificationController extends Controller
             'email' => $doctor->email,
             'department' => $doctor->department,
             'comment' => $request->comment,
-            'date_time' => $notification->date_time,
+            // 'date_time' => $notification->date_time,
         ]);
 
         DB::table('patient_notification')
@@ -155,7 +155,7 @@ class PatientNotificationController extends Controller
             'email' => $doctor->email,
             'department' => $doctor->department,
             'comment' => $request->comment,
-            'date_time' => $notification->date_time,
+            // 'date_time' => $notification->date_time,
         ]);
 
 
