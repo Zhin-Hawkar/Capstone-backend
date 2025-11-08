@@ -86,6 +86,7 @@ class PatientNotificationController extends Controller
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
             'comment' => $request->comment,
+            'email' => "dyiar@gmail.com",
             'date_time' => $notification->date_time,
         ]);
 
@@ -145,6 +146,7 @@ class PatientNotificationController extends Controller
         DB::table('doctor_notification')->insert([
             'patientId' => $request->patientId,
             'comment' => $request->comment,
+            'email' => "dyiar@gmail.com",
             'date_time' => $notification->date_time,
         ]);
 
