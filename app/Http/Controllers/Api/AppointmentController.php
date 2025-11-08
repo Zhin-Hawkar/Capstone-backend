@@ -45,7 +45,7 @@ class AppointmentController extends Controller
             foreach ($doctors as $doctor) {
                 PatientNotification::create([
                     'patientId' => $validated['patientId'],
-                    'doctorId' => $doctor->id,
+                    'doctorId' => is_array($doctor) ? $doctor['id'] : $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
                     'age' => $validated['age'],
@@ -58,7 +58,7 @@ class AppointmentController extends Controller
 
                 Appointment::create([
                     'patientId' => $validated['patientId'],
-                    'doctorId' => $doctor->id,
+                    'doctorId' => is_array($doctor) ? $doctor['id'] : $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
                     'age' => $validated['age'],
