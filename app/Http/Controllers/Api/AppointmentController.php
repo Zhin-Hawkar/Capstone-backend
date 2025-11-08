@@ -14,74 +14,74 @@ class AppointmentController extends Controller
 {
     public function sendAppointment(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'patientId' => 'required',
-            'firstName' => "required",
-            'lastName' => "required",
-            'age' => "required",
-            'gender' => "required",
-            'email' => 'required|email',
-            'department' => "required",
-            'help' => "required",
-            'date_time' => "required",
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'code' => 401,
-                'error' => $validator->errors(),
-            ], 401);
-        }
-
-        $appointment = Appointment::create([
-            'patientId' => $request->patientId,
-            'doctorId' => null,
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'age' => $request->age,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'department' => $request->department,
-            'help' => $request->help,
-            'date_time' => $request->date_time,
-            'status' => 'pending',
-        ]);
-
-        $doctors = DB::table("doctor")
-            ->where("department", $request->department)
-            ->get();
-
-        if ($doctors->isEmpty()) {
-            return response()->json([
-                'code' => 404,
-                'error' => 'No doctors found in this department.',
-            ], 404);
-        }
-
-        foreach ($doctors as $doctor) {
-            PatientNotification::create([
-                'patientId' => $request->patientId,
-                'doctorId' => $doctor->id,
-                'firstName' => $request->firstName,
-                'lastName' => $request->lastName,
-                'age' => $request->age,
-                'gender' => $request->gender,
-                'email' => $request->email,
-                'department' => $request->department,
-                'help' => $request->help,
-                'date_time' => $request->date_time,
+        try {
+            $validator = Validator::make($request->all(), [
+                'patientId' => 'required',
+                'firstName' => "required",
+                'lastName' => "required",
+                'age' => "required",
+                'gender' => "required",
+                'email' => 'required|email',
+                'department' => "required",
+                'help' => "required",
+                'date_time' => "required",
             ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 400,
+                    'error' => $validator->errors(),
+                ], 400);
+            }
+
+            $validated = $validator->validated();
+
+            $appointment = Appointment::create([
+                'patientId' => $validated['patientId'],
+                'doctorId' => "",
+                'firstName' => $validated['firstName'],
+                'lastName' => $validated['lastName'],
+                'age' => $validated['age'],
+                'gender' => $validated['gender'],
+                'email' => $validated['email'],
+                'department' => $validated['department'],
+                'help' => $validated['help'],
+                'date_time' => $validated['date_time'],
+            ]);
+
+            $doctors = DB::table("doctor")
+                ->where("department", $validated["department"])
+                ->get();
+
+            foreach ($doctors as $doctor) {
+                PatientNotification::create([
+                    'patientId' => $validated['patientId'],
+                    'doctorId' => $doctor->id,
+                    'firstName' => $validated['firstName'],
+                    'lastName' => $validated['lastName'],
+                    'age' => $validated['age'],
+                    'gender' => $validated['gender'],
+                    'email' => $validated['email'],
+                    'department' => $validated['department'],
+                    'help' => $validated['help'],
+                    'date_time' => $validated['date_time'],
+                ]);
+            }
+
+            event(new NewAppointmentRequest($appointment, $doctors));
+
+            return response()->json([
+                'code' => 200,
+                'appointment' => $appointment,
+                'doctors' => $doctors,
+                'message' => 'Appointment request sent successfully to all matching doctors.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        event(new NewAppointmentRequest($appointment, $doctors));
-
-        return response()->json([
-            'code' => 200,
-            'message' => 'Appointment sent successfully.',
-            'appointment' => $appointment,
-            'notifiedDoctorsCount' => count($doctors),
-            'doctors' => $doctors,
-        ], 200);
     }
 
 
