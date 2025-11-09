@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\AiChatLog;
 use App\Models\PatientNotification;
 use App\Models\User;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -44,6 +45,20 @@ class PatientNotificationController extends Controller
             'notification' => $notification
         ], 200);
     }
+    public function showAcceptedAppointments()
+    {
+        $user = Auth::user();
+
+        $notification = DB::table('accepted_appointment')
+            ->where('department', $user->department)
+            ->where("patientId", $user->id)
+            ->get();
+
+        return response()->json([
+            'code' => 200,
+            'notification' => $notification
+        ], 200);
+    }
 
 
     public function rejectPatientRequest(Request $request)
@@ -71,6 +86,7 @@ class PatientNotificationController extends Controller
                     'error' => 'Doctor not found.',
                 ], 404);
             }
+
 
             $notification = DB::table('patient_notification')
                 ->where('patientId', $validated['patientId'])

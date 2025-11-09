@@ -107,6 +107,7 @@ class AppointmentController extends Controller
         $validated = $validator->validate();
 
         $doctor = DB::table("doctor")->where("id", $validated["doctorId"])->first();
+        $user = DB::table("users")->where("id", $validated["patientId"])->first();
 
         $appointment = DB::table('appointment')
             ->where('patientId', $validated['patientId'])
@@ -119,6 +120,7 @@ class AppointmentController extends Controller
                 'doctorId'    => $appointment->doctorId,
                 'firstName'    => $appointment->firstName,
                 'lastName'    => $appointment->lastName,
+                'image' => $user->image,
                 'doctorFirstName'    => $doctor->firstName,
                 'doctorLastName'    => $doctor->lastName,
                 'age'    => $appointment->age,
