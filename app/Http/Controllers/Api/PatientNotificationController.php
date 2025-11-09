@@ -50,7 +50,6 @@ class PatientNotificationController extends Controller
         $user = Auth::user();
 
         $notification = DB::table('accepted_appointment')
-            ->where('department', $user->department)
             ->where("patientId", $user->id)
             ->get();
 
