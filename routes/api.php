@@ -21,7 +21,8 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/showacceptedappointments', [PatientNotificationController::class, 'showAcceptedAppointments']);
+    Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
+    Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/uploadmedicalrecord', [MedicalRecordsController::class, 'uploadMedicalRecord']);
