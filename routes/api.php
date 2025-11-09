@@ -16,12 +16,12 @@ Route::post('/registerhospital', [HospitalController::class, 'registerHospital']
 Route::post('/sendappointment', [AppointmentController::class, 'sendAppointment']);
 Route::post('/acceptdoctorrequest', [AppointmentController::class, 'acceptDoctorRequest']);
 Route::post('/rejectpatientrequest', [PatientNotificationController::class, 'rejectPatientRequest']);
-Route::post('/showacceptedappointments', [PatientNotificationController::class, 'showAcceptedAppointments']);
 Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/showacceptedappointments', [PatientNotificationController::class, 'showAcceptedAppointments']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/uploadmedicalrecord', [MedicalRecordsController::class, 'uploadMedicalRecord']);
     Route::post('/deletemedicalrecord', [MedicalRecordsController::class, 'deleteMedicalRecord']);
