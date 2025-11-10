@@ -14,7 +14,7 @@ class StatisticsController extends Controller
     {
         $doctor = Auth::user();
 
-        $numberOfPatients = DB::table("accepted_appointments")->where("doctorId", $doctor->id)->count();
+        $numberOfPatients = DB::table("accepted_appointment")->where("doctorId", $doctor->id)->count();
         if ($numberOfPatients == null) {
             return response()->json([
                 'code' => 200,
