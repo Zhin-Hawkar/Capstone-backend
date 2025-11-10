@@ -33,5 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/senddoctornotification', [PatientNotificationController::class, 'sendDoctorNotification']);
     Route::post('/deletedoctor', [DoctorController::class, 'deleteDoctor']);
     Route::get('/showmedicalrecords', [MedicalRecordsController::class, 'showMedicalRecords']);
+    Route::post('/showmedicalrecordstodoctor', [MedicalRecordsController::class, 'showMedicalRecordsToDoctor']);
     Route::post('/edituserprofile', [UserController::class, 'editProfile']);
 });
