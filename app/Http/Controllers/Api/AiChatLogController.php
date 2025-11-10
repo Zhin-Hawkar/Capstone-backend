@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Smalot\PdfParser\Parser;
 
 
 class AiChatLogController extends Controller
@@ -117,5 +119,87 @@ class AiChatLogController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function analyzeMedicalData(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'text' => 'required|string',
+            'medical_record' => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 422,
+                'error' => $validator->errors(),
+            ], 422);
+        }
+
+        $text = $request->input('text');
+        $fileContent = '';
+
+        if ($request->hasFile('medical_record')) {
+            $file = $request->file('medical_record');
+            $extension = $file->getClientOriginalExtension();
+
+            if (in_array($extension, ['txt'])) {
+                $fileContent = file_get_contents($file->getRealPath());
+            } elseif ($extension === 'pdf') {
+                try {
+                    $parser = new \Smalot\PdfParser\Parser();
+                    $pdf = $parser->parseFile($file->getRealPath());
+                    $fileContent = $pdf->getText();
+                } catch (\Exception $e) {
+                    $fileContent = '[Unable to extract text from PDF]';
+                }
+            } else {
+                $fileContent = '[File type not directly readable: ' . $extension . ']';
+            }
+        }
+
+        $prompt = "Patient text: " . $text;
+        if (!empty($fileContent)) {
+            $prompt .= "\n\nAttached medical record content:\n" . $fileContent;
+        }
+
+        $OPEN_ROUTER_ENDPOINT = env('OPENROUTER_ENDPOINT');
+        $OPENROUTER_API_KEY = env('OPENROUTER_API_KEY');
+
+        $systemMessage = [
+            "role" => "system",
+            "content" => "You are a medical data analyst AI. Analyze patient text and uploaded medical record content, summarize findings, identify potential health issues, and suggest what type of doctor might be appropriate to consult. Keep your tone professional and clear."
+        ];
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $OPENROUTER_API_KEY,
+            'Content-Type' => 'application/json',
+            'HTTP-Referer' => 'https://capstone-backend-inbqo.sevalla.app',
+            'X-Title' => 'Healthcare medical analyzer'
+        ])->post($OPEN_ROUTER_ENDPOINT, [
+            "model" => "openai/gpt-3.5-turbo",
+            "messages" => [
+                $systemMessage,
+                [
+                    "role" => "user",
+                    "content" => $prompt
+                ]
+            ],
+            "max_tokens" => 800,
+            "temperature" => 0.4
+        ]);
+
+        $aiResponse = $response->json();
+        $aiContent = $aiResponse['choices'][0]['message']['content'] ?? null;
+
+        if (!$aiContent) {
+            return response()->json(['error' => 'No response from AI'], 500);
+        }
+
+
+
+        return response()->json([
+            'code' => 200,
+            'ai_analysis' => $aiContent,
+        ]);
     }
 }

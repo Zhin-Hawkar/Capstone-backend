@@ -9,6 +9,7 @@ use App\Models\PatientNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class AppointmentController extends Controller
 {
@@ -25,6 +26,8 @@ class AppointmentController extends Controller
                 'department' => "required",
                 'help' => "required",
                 'date_time' => "required",
+                'medical_record' => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png|max:5120',
+
             ]);
 
             if ($validator->fails()) {
@@ -36,7 +39,16 @@ class AppointmentController extends Controller
 
             $validated = $validator->validated();
 
+            $aiRequest = Http::attach(
+                'medical_record',
+                $request->file('medical_record') ? file_get_contents($request->file('medical_record')->getRealPath()) : '',
+                $request->file('medical_record') ? $request->file('medical_record')->getClientOriginalName() : ''
+            )->post(route('analyze.medical.data'), [
+                'text' => $validated['help'],
+            ]);
 
+            $aiResponse = $aiRequest->json();
+            $aiResult = $aiResponse['ai_analysis'] ?? 'No AI analysis available.';
 
             $doctors = DB::table("doctor")
                 ->where("department", $validated["department"])
@@ -52,6 +64,7 @@ class AppointmentController extends Controller
                     'gender' => $validated['gender'],
                     'email' => $validated['email'],
                     'department' => $validated['department'],
+                    'ai_analysis' => $aiResult,
                     'help' => $validated['help'],
                     'date_time' => $validated['date_time'],
                 ]);
@@ -68,6 +81,7 @@ class AppointmentController extends Controller
                     'email' => $validated['email'],
                     'department' => $validated['department'],
                     'help' => $validated['help'],
+                    'ai_analysis' => $aiResult,
                     'date_time' => $validated['date_time'],
                 ]);
             }
