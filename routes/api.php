@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\MedicalRecordsController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\PatientNotificationController;
+use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
 Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalData'])
-    ->name('analyze.medical.data');Route::middleware('auth:sanctum')->group(function () {
+    ->name('analyze.medical.data');
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
@@ -34,6 +36,7 @@ Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalD
     Route::get('/senddoctornotification', [PatientNotificationController::class, 'sendDoctorNotification']);
     Route::post('/deletedoctor', [DoctorController::class, 'deleteDoctor']);
     Route::get('/showmedicalrecords', [MedicalRecordsController::class, 'showMedicalRecords']);
+    Route::get('/getstatistics', [StatisticsController::class, 'getStatistics']);
     Route::post('/showmedicalrecordstodoctor', [MedicalRecordsController::class, 'showMedicalRecordsToDoctor']);
     Route::post('/edituserprofile', [UserController::class, 'editProfile']);
 });
