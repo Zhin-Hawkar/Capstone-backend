@@ -10,29 +10,23 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsController extends Controller
 {
-    public function getStatistics()
-    {
-        $doctor = Auth::user();
+public function getStatistics()
+{
+    $doctor = Auth::user();
 
-        $numberOfPatients = DB::table("accepted_appointment")->where("doctorId", $doctor->id)->count();
-        if ($numberOfPatients == null) {
-            return response()->json([
-                'code' => 200,
-                'error' => "no record"
-            ], 200);
-        }
-        $numberOfRequests = DB::table("doctor_notification")->where("doctorId", $doctor->id)->count();
-        if ($numberOfRequests == null) {
-            return response()->json([
-                'code' => 200,
-                'error' => "no record"
-            ], 200);
-        }
+    $numberOfPatients = DB::table('accepted_appointment')
+        ->where('doctorId', $doctor->id)
+        ->count();
 
-        return response()->json([
-            'code' => 200,
-            'numberOfPatients' => $numberOfPatients,
-            'numberOfRequests' => $numberOfRequests,
-        ]);
-    }
+    $numberOfRequests = DB::table('doctor_notification')
+        ->where('doctorId', $doctor->id)
+        ->count();
+
+    return response()->json([
+        'code' => 200,
+        'numberOfPatients' => $numberOfPatients,
+        'numberOfRequests' => $numberOfRequests,
+    ], 200);
+}
+
 }
