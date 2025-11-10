@@ -14,6 +14,7 @@ class PatientNotification extends Model
         'patientId',
         'doctorId',
         'firstName',
+        'ai_analysis',
         'lastName',
         'age',
         'gender',
