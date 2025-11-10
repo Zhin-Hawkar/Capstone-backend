@@ -39,11 +39,18 @@ class AppointmentController extends Controller
 
             $validated = $validator->validated();
 
-            $aiRequest = Http::attach(
-                'medical_record',
-                $request->file('medical_record') ? file_get_contents($request->file('medical_record')->getRealPath()) : '',
-                $request->file('medical_record') ? $request->file('medical_record')->getClientOriginalName() : ''
-            )->post(route('analyze.medical.data'), [
+            $http = Http::asMultipart();
+
+            if ($request->hasFile('medical_record')) {
+                $file = $request->file('medical_record');
+                $http = $http->attach(
+                    'medical_record',
+                    file_get_contents($file->getRealPath()),
+                    $file->getClientOriginalName()
+                );
+            }
+
+            $aiRequest = $http->post(route('analyze.medical.data'), [
                 'text' => $validated['help'],
             ]);
 
