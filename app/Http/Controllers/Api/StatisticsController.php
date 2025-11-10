@@ -19,9 +19,7 @@ class StatisticsController extends Controller
                 ->where('doctorId', $doctor->id)
                 ->count();
 
-            $numberOfRequests = DB::table('doctor_notification')
-                ->where('doctorId', $doctor->id)
-                ->count();
+            $numberOfRequests = DB::table('doctor_notification')->count();
 
             return response()->json([
                 'code' => 200,
