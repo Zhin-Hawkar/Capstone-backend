@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/generateresetcode', [UserController::class, 'generateResetCode']);
+    Route::post('/verifycode', [UserController::class, 'verifyCode']);
+    Route::post('/resetpassword', [UserController::class, 'resetPassword']);
     Route::post('/uploadmedicalrecord', [MedicalRecordsController::class, 'uploadMedicalRecord']);
     Route::post('/deletemedicalrecord', [MedicalRecordsController::class, 'deleteMedicalRecord']);
     Route::post('/editdoctorprofile', [DoctorController::class, 'editDoctorProfile']);

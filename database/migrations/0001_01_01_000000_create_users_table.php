@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('location'); //
             $table->string('image'); //
             $table->longText('description'); //
+            $table->integer('reset_password_code'); //
             $table->rememberToken();
             $table->timestamps();
         });

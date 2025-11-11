@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -197,5 +198,102 @@ class UserController extends Controller
                 'image' => $user->image ? $user->image : null,
             ],
         ], 200);
+    }
+
+    public function generateResetCode(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => "email' => 'required|email|exists:users,email",
+            ]);
+
+            $validated = $validator->validate();
+
+            $number = rand(1000, 9999);
+            DB::table("users")->where("email", $validated["email"])->update([
+                "reset_password_code" => $number,
+            ]);
+
+            $resetCode = DB::table("users")->where("email", $validated["email"])->first();
+            return response()->json([
+                'code' => 200,
+                'reset_password_code' => $resetCode,
+
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'code' => 500,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function verifyCode(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'reset_password_code' => "required",
+            ]);
+
+            $validated = $validator->validate();
+
+            $user = Auth::user();
+
+            $resetCode = DB::table("users")
+                ->where("email", $user->email)
+                ->value("reset_password_code");
+
+            if ($resetCode != $validated["reset_password_code"]) {
+                return response()->json([
+                    'code' => 401,
+                    'error' => "Wrong code",
+                ], 401);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'message' => "code verified successfuly",
+
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'code' => 500,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => "required",
+            ]);
+
+            $validated = $validator->validate();
+
+            $user = Auth::user();
+
+            DB::table("users")->where("email", $user->email)->update([
+                "password" => Hash::make($validated["password"]),
+                "reset_password_code" => null,
+            ]);
+
+            return response()->json([
+                'code' => 200,
+                'message' => "password reseted sucessfuly",
+
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'code' => 500,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }
