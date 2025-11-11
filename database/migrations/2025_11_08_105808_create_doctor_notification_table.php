@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('doctor_notification', function (Blueprint $table) {
             $table->id();
-            $table->integer("patientId");
-            $table->string("firstName")->nullable();
-            $table->string("lastName")->nullable();
-            $table->integer("age")->nullable();
-            $table->string("gender")->nullable();
-            $table->integer("yearsofexperience")->nullable();
-            $table->string("description")->nullable();
-            $table->string('email')->unique();
-            $table->string("department")->nullable();
-            $table->string("hospital")->nullable();
-            $table->string("specialization")->nullable();
-            $table->string("comment")->nullable();
-            $table->json("qualification")->nullable();
-            $table->dateTime("date_time")->nullable();
-            $table->string("status")->default("pending");
+            $table->integer("patientId");//
+            $table->string("firstName")->nullable();//
+            $table->string("lastName")->nullable();//
+            $table->integer("age")->nullable();//
+            $table->string("gender")->nullable();//
+            $table->integer("yearsofexperience")->nullable();//
+            $table->string("description")->nullable();//
+            $table->string('email')->unique();//
+            $table->string("department")->nullable();//
+            $table->string("hospital")->nullable();//
+            $table->string("specialization")->nullable();//
+            $table->string("comment")->nullable();//
+            $table->json("qualification")->nullable();//
+            $table->dateTime("date_time")->nullable();//
+            $table->string("status")->default("pending");//
             $table->timestamps();
         });
     }

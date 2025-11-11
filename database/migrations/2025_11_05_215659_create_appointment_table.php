@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('appointment', function (Blueprint $table) {
             $table->id();
+            $table->integer("patientId")->nullable();
+            $table->integer("doctorId")->nullable();
             $table->string("firstName")->nullable();
             $table->string("lastName")->nullable();
             $table->integer("age")->nullable();
+            $table->string("doctorFirstName")->nullable();
+            $table->string("doctorLastName")->nullable();
+            $table->longText("ai_analysis")->nullable();
             $table->string("gender")->nullable();
             $table->string('email')->unique();
             $table->string("department")->nullable();

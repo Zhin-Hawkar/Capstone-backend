@@ -13,18 +13,20 @@ return new class extends Migration
     {
         Schema::create('doctor', function (Blueprint $table) {
             $table->id();
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->string('specialization');
-            $table->json('qualification');
-            $table->string('hospital');
-            $table->string('department');
-            $table->string('description')->nullable();
-            $table->string('role');
-            $table->integer('licenseId');
-            $table->integer('yearsofexperience')->nullable();
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->string('firstName'); //
+            $table->string('lastName'); //
+            $table->string('specialization'); //
+            $table->json('qualification'); //
+            $table->string('hospital'); //
+            $table->string('department'); //
+            $table->string('description')->nullable(); //
+            $table->string('role'); //
+            $table->integer('licenseId'); //
+            $table->integer('age'); //
+            $table->integer('yearsofexperience')->nullable(); //
+            $table->string('email')->unique(); //
+            $table->string('password'); //
+            $table->string('remember_token'); //
             $table->timestamps();
         });
     }
