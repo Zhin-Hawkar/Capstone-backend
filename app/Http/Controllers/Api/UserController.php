@@ -214,7 +214,7 @@ class UserController extends Controller
                 "reset_password_code" => $number,
             ]);
 
-            $resetCode = DB::table("users")->where("email", $validated["email"])->first();
+            $resetCode = DB::table("users")->where("email", $validated["email"])->value("reset_password_code");
             return response()->json([
                 'code' => 200,
                 'reset_password_code' => $resetCode,
