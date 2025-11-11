@@ -204,7 +204,7 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => "email' => 'required|email|exists:users,email",
+                'email' => "required|email|exists:users,email",
             ]);
 
             $validated = $validator->validate();
