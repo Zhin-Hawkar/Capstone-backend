@@ -210,7 +210,7 @@ class PatientNotificationController extends Controller
 
             $notification = DB::table('doctor_notification')
                 ->where('patientId', $user->id)
-                ->where("doctorId", $validated["doctorId"])
+                ->where("doctorId", $doctor->id)
                 ->first();
             if (!$notification) {
                 return response()->json([
@@ -289,6 +289,7 @@ class PatientNotificationController extends Controller
             DB::transaction(function () use ($doctor, $notification, $validated, $request) {
                 DB::table('doctor_notification')->insert([
                     'patientId' => $validated['patientId'],
+                    'doctorId' => $doctor->id,
                     'firstName' => $doctor->firstName,
                     'lastName' => $doctor->lastName,
                     'age' => $doctor->age,
