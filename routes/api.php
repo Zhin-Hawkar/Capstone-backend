@@ -14,22 +14,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
-Route::post('/sendappointment', [AppointmentController::class, 'sendAppointment']);
-Route::post('/acceptdoctorrequest', [AppointmentController::class, 'acceptDoctorRequest']);
-Route::post('/rejectpatientrequest', [PatientNotificationController::class, 'rejectPatientRequest']);
-Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
 Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalData'])
-    ->name('analyze.medical.data');
+->name('analyze.medical.data');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
+    Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::post('/generateresetcode', [UserController::class, 'generateResetCode']);
     Route::post('/verifycode', [UserController::class, 'verifyCode']);
+    Route::post('/rejectpatientrequest', [PatientNotificationController::class, 'rejectPatientRequest']);
+    Route::post('/rejectdoctorrequest', [PatientNotificationController::class, 'rejectDoctorRequest']);
+    Route::post('/sendappointment', [AppointmentController::class, 'sendAppointment']);
+    Route::post('/acceptdoctorrequest', [AppointmentController::class, 'acceptDoctorRequest']);
     Route::post('/resetpassword', [UserController::class, 'resetPassword']);
     Route::post('/uploadmedicalrecord', [MedicalRecordsController::class, 'uploadMedicalRecord']);
     Route::post('/deletemedicalrecord', [MedicalRecordsController::class, 'deleteMedicalRecord']);
