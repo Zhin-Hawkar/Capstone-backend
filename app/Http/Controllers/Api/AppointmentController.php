@@ -19,7 +19,6 @@ class AppointmentController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'patientId' => 'required',
                 'firstName' => "required",
                 'lastName' => "required",
                 'age' => "required",
@@ -40,7 +39,7 @@ class AppointmentController extends Controller
             }
 
             $validated = $validator->validated();
-
+            $user = Auth::user();
             $http = Http::asMultipart();
 
             if ($request->hasFile('medical_record')) {
@@ -65,7 +64,7 @@ class AppointmentController extends Controller
 
             foreach ($doctors as $doctor) {
                 PatientNotification::create([
-                    'patientId' => $validated['patientId'],
+                    'patientId' => $user->id,
                     'doctorId' => $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
@@ -79,7 +78,7 @@ class AppointmentController extends Controller
                 ]);
 
                 Appointment::create([
-                    'patientId' => $validated['patientId'],
+                    'patientId' => $user->id,
                     'doctorId' => $doctor->id,
                     'firstName' => $validated['firstName'],
                     'doctorFirstName' => $doctor->firstName,
@@ -95,7 +94,7 @@ class AppointmentController extends Controller
                 ]);
             }
 
-            $appointments = DB::table("appointment")->where("patientId", $validated["patientId"])->get();
+            $appointments = DB::table("appointment")->where("patientId", $user->id)->get();
             foreach ($appointments as $appointment) {
                 event(new NewAppointmentRequest($appointment, $appointment->patientId));
             }
