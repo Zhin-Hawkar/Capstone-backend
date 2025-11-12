@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
+
 
 class AppointmentController extends Controller
 {
@@ -116,7 +118,6 @@ class AppointmentController extends Controller
     public function acceptDoctorRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'patientId' => "required",
             'doctorId' => "required",
         ]);
 
@@ -129,11 +130,11 @@ class AppointmentController extends Controller
 
         $validated = $validator->validate();
 
+        $user = Auth::user();
         $doctor = DB::table("doctor")->where("id", $validated["doctorId"])->first();
-        $user = DB::table("users")->where("id", $validated["patientId"])->first();
 
         $appointment = DB::table('appointment')
-            ->where('patientId', $validated['patientId'])
+            ->where('patientId', $user->id)
             ->where('doctorId', $validated['doctorId'])
             ->first();
 
