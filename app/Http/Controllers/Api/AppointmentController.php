@@ -161,6 +161,10 @@ class AppointmentController extends Controller
             DB::table('appointment')
                 ->where('patientId', $validated['patientId'])
                 ->delete();
+                
+            DB::table('patient_notification')
+                ->where('patientId', $validated['patientId'])
+                ->delete();
         } else {
             return response()->json([
                 'code' => 404,
