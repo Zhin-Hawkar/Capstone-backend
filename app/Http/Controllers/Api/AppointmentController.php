@@ -68,6 +68,7 @@ class AppointmentController extends Controller
                     'doctorId' => $doctor->id,
                     'firstName' => $validated['firstName'],
                     'lastName' => $validated['lastName'],
+                    'image' => $user->image,
                     'age' => $validated['age'],
                     'gender' => $validated['gender'],
                     'email' => $validated['email'],
