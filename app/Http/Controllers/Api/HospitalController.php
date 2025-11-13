@@ -123,4 +123,26 @@ class HospitalController extends Controller
             'hospital' => $hospital,
         ], 200);
     }
+
+    public function getAllHospitals()
+    {
+        try {
+            $hospitals = Hospital::all();
+
+            if (!$hospitals) {
+                return response()->json([
+                    'message' => "No hospital"
+                ]);
+            }
+            return response()->json([
+                'code' => 200,
+                'hospitals' => $hospitals,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
