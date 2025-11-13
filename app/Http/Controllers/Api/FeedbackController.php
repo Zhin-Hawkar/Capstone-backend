@@ -49,4 +49,14 @@ class FeedbackController extends Controller
             ], 500);
         }
     }
+
+    public function getAllFeedbacks()
+    {
+        $feedbacks = DB::table("feedback")->get();
+
+        return response()->json([
+            "code" => 200,
+            "feedbacks" => $feedbacks,
+        ], 200);
+    }
 }
