@@ -120,10 +120,8 @@ class HospitalController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'type' => 'nullable|string|max:255',
             'phoneNumber' => 'nullable|string|max:255',
-            'departments' => 'nullable',
             'workingHours' => 'nullable|integer|min:0',
             'numberOfBeds' => 'nullable|integer|min:0',
-            'services' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -154,7 +152,7 @@ class HospitalController extends Controller
                 'message' => 'Profile updated successfully',
                 'hospital' => $hospital,
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'code' => 500,
                 'error' => $e->getMessage(),
