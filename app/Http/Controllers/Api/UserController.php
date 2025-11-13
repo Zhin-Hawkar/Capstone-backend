@@ -234,15 +234,15 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'email'=>"required",
                 'reset_password_code' => "required",
             ]);
 
             $validated = $validator->validate();
 
-            $user = Auth::user();
 
             $resetCode = DB::table("users")
-                ->where("email", $user->email)
+                ->where("email", $validated["email"])
                 ->value("reset_password_code");
 
             if ($resetCode != $validated["reset_password_code"]) {
@@ -271,14 +271,15 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                "email"=>"required",
                 'password' => "required",
             ]);
 
             $validated = $validator->validate();
 
-            $user = Auth::user();
+            
 
-            DB::table("users")->where("email", $user->email)->update([
+            DB::table("users")->where("email", $validated["email"])->update([
                 "password" => Hash::make($validated["password"]),
                 "reset_password_code" => null,
             ]);
