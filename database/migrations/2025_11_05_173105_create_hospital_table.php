@@ -13,22 +13,22 @@ return new class extends Migration
     {
         Schema::create('hospital', function (Blueprint $table) {
             $table->id();
-            $table->string('hospitalName'); //
-            $table->integer('hospitalCode'); //
-            $table->string('location'); //
-            $table->integer('licenseId'); //
-            $table->string('type'); //
-            $table->string('phoneNumber'); //
+            $table->string('hospitalName')->nullable(); //
+            $table->integer('hospitalCode')->nullable(); //
+            $table->string('location')->nullable(); //
+            $table->integer('licenseId')->nullable(); //
+            $table->string('type')->nullable(); //
+            $table->string('phoneNumber')->nullable(); //
             $table->string('website')->nullable(); //
-            $table->json('departments'); //
-            $table->integer('workingHours'); //
-            $table->string('description'); //
-            $table->json('services'); //
-            $table->string('role'); //
-            $table->integer('numberOfBeds'); //number of beds//
+            $table->json('departments')->nullable(); //
+            $table->integer('workingHours')->nullable(); //
+            $table->string('description')->nullable(); //
+            $table->json('services')->nullable(); //
+            $table->string('role')->nullable(); //
+            $table->integer('numberOfBeds')->nullable(); //number of beds//
             $table->string('image')->nullable(); //
             $table->string('email')->unique(); //
-            $table->string('remember_token'); //
+            $table->string('remember_token')->nullable(); //
             $table->string('password'); //
             $table->timestamps();
         });
