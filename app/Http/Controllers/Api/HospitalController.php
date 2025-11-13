@@ -66,6 +66,37 @@ class HospitalController extends Controller
         ], 200);
     }
 
+    public function logHospitalIn(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'password' => "required|min:6",
+
+        ]);
+
+        $validated = $validator->validated();
+
+        $hospital = Hospital::where('email', $validated["email"])->first();
+        if (!$hospital || !Hash::check($validated["password"], $hospital->password)) {
+            return response()->json([
+                'code' => 401,
+                'error' => "Wrong Credentials",
+            ], 200);
+        }
+
+
+        $token = $hospital->createToken('api-token')->plainTextToken;
+        $hospital->remember_token = $token;
+        $hospital->save();
+
+        return response()->json([
+            'code' => 200,
+            'message' => "User logged in Successfully",
+            'hospital' => $hospital,
+            'token' => $token,
+        ], 200);
+    }
+
 
 
     public function editHospitalProfile(Request $req)
