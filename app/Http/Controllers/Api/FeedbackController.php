@@ -37,6 +37,11 @@ class FeedbackController extends Controller
                 "hospitalLocation" => $hospital->location,
                 "hospitalImage" => $hospital->image,
             ]);
+
+            return response()->json([
+                "code" => 200,
+                "message" => "feedback sent successfully",
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 500,
