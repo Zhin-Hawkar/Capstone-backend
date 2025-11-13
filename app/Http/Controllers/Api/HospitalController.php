@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hospital;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -131,28 +132,34 @@ class HospitalController extends Controller
                 'error' => $validator->errors(),
             ], 422);
         }
+        try {
+            $validated = $validator->validated();
 
-        $validated = $validator->validated();
-
-        if ($req->hasFile('image')) {
-            if ($hospital->image) {
-                $relativePath = str_replace(url('storage') . '/', '', $hospital->image);
-                if (Storage::disk('public')->exists($relativePath)) {
-                    Storage::disk('public')->delete($relativePath);
+            if ($req->hasFile('image')) {
+                if ($hospital->image) {
+                    $relativePath = str_replace(url('storage') . '/', '', $hospital->image);
+                    if (Storage::disk('public')->exists($relativePath)) {
+                        Storage::disk('public')->delete($relativePath);
+                    }
                 }
+
+                $path = $req->file('image')->store('hospital_images', 'public');
+                $validated['image'] = url('storage/' . $path);
             }
 
-            $path = $req->file('image')->store('hospital_images', 'public');
-            $validated['image'] = url('storage/' . $path);
+            $hospital->update($validated);
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Profile updated successfully',
+                'hospital' => $hospital,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $hospital->update($validated);
-
-        return response()->json([
-            'code' => 200,
-            'message' => 'Profile updated successfully',
-            'hospital' => $hospital,
-        ], 200);
     }
 
     public function getAllHospitals()
