@@ -114,7 +114,7 @@ class HospitalController extends Controller
         $validator = Validator::make($req->all(), [
             'hospitalName' => 'nullable|string|max:255',
             'hospitalCode' => 'nullable|integer|min:0',
-            'licenseId' => 'nullable|integer|max:255',
+            'licenseId' => 'nullable',
             'location' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
