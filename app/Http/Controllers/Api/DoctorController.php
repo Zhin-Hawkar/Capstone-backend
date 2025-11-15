@@ -77,7 +77,7 @@ class DoctorController extends Controller
             'location' => 'nullable|string|max:255',
             'age' => 'nullable|integer|min:0',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'doctorImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'specialization' => 'nullable|string|max:255',
             'qualification' => 'nullable|string|max:255',
             'licenseNumber' => 'nullable|integer|min:0',
@@ -94,7 +94,7 @@ class DoctorController extends Controller
 
         $validated = $validator->validated();
 
-        if ($req->hasFile('image')) {
+        if ($req->hasFile('doctorImage')) {
             if ($doctor->image) {
                 $relativePath = str_replace(url('storage') . '/', '', $doctor->image);
                 if (Storage::disk('public')->exists($relativePath)) {
@@ -102,8 +102,8 @@ class DoctorController extends Controller
                 }
             }
 
-            $path = $req->file('image')->store('doctor_images', 'public');
-            $validated['image'] = url('storage/' . $path);
+            $path = $req->file('doctorImage')->store('doctor_images', 'public');
+            $validated['doctorImage'] = url('storage/' . $path);
         }
 
         $doctor->update($validated);
