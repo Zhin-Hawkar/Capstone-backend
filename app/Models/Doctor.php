@@ -28,6 +28,7 @@ class Doctor extends Model
         'department',
         'description',
         'hospital',
+        'hospitalId',
         'role',
         'password',
     ];

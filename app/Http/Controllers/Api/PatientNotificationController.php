@@ -268,10 +268,11 @@ class PatientNotificationController extends Controller
 
         try {
             $doctor = Auth::user();
-            if (!$doctor) {
+            $hospital = DB::table("hospital")->where("id", $doctor->hospitalId)->first();
+            if (!$doctor || !$hospital) {
                 return response()->json([
                     'code' => 404,
-                    'error' => 'Doctor not found.',
+                    'error' => 'record not found.',
                 ], 404);
             }
 
@@ -286,7 +287,7 @@ class PatientNotificationController extends Controller
                 ], 404);
             }
 
-            DB::transaction(function () use ($doctor, $notification, $validated, $request) {
+            DB::transaction(function () use ($doctor, $notification, $validated, $request, $hospital) {
                 DB::table('doctor_notification')->insert([
                     'patientId' => $validated['patientId'],
                     'doctorId' => $doctor->id,
@@ -298,6 +299,8 @@ class PatientNotificationController extends Controller
                     'status' => "accepted",
                     'comment' => $request->comment,
                     'date_time' => $notification->date_time,
+                    'hospitalName'=>$hospital->hospitalName,
+                    'location'=>$hospital->location,
                 ]);
 
                 DB::table('appointment')

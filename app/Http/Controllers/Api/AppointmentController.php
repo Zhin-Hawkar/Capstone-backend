@@ -132,6 +132,7 @@ class AppointmentController extends Controller
 
         $user = Auth::user();
         $doctor = DB::table("doctor")->where("id", $validated["doctorId"])->first();
+        $hospital = DB::table("hospital")->where("id", $doctor->hospitalId)->first();
 
         $appointment = DB::table('appointment')
             ->where('patientId', $user->id)
@@ -155,6 +156,9 @@ class AppointmentController extends Controller
                 'medical_record'    => $appointment->medical_record,
                 'date_time'   => $appointment->date_time ?? null,
                 'status'      => $appointment->status,
+                "hospitalId"=>$hospital->id,
+                "hospitalName"=>$hospital->hospitalName,
+                "hospitalLocation"=>$hospital->location,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ]);
