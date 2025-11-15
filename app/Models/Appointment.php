@@ -19,6 +19,7 @@ class Appointment extends Model
         'doctorFirstName',
         'doctorLastName',
         'ai_analysis',
+        'doctorImage',
         'firstName',
         'lastName',
         'age',

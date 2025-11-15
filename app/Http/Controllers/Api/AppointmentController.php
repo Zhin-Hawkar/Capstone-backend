@@ -148,6 +148,7 @@ class AppointmentController extends Controller
                 'image' => $user->image,
                 'doctorFirstName'    => $doctor->firstName,
                 'doctorLastName'    => $doctor->lastName,
+                'doctorImage'    => $doctor->doctorImage,
                 'age'    => $appointment->age,
                 'gender'    => $appointment->gender,
                 'email'    => $appointment->email,

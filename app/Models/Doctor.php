@@ -19,7 +19,7 @@ class Doctor extends Model
         'lastName',
         'age',
         'location',
-        'image',
+        'doctorImage',
         'email',
         'specialization',
         'qualification',

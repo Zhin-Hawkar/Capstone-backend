@@ -149,6 +149,7 @@ class PatientNotificationController extends Controller
                     'firstName' => $doctor->firstName,
                     'lastName' => $doctor->lastName,
                     'age' => $doctor->age,
+                    'doctorImage' => $doctor->doctorImage,
                     'email' => $doctor->email,
                     'department' => $doctor->department,
                     'status' => "rejected",
@@ -295,12 +296,13 @@ class PatientNotificationController extends Controller
                     'lastName' => $doctor->lastName,
                     'age' => $doctor->age,
                     'email' => $doctor->email,
+                    'doctorImage' => $doctor->doctorImage,
                     'department' => $doctor->department,
                     'status' => "accepted",
                     'comment' => $request->comment,
                     'date_time' => $notification->date_time,
-                    'hospitalName'=>$hospital->hospitalName,
-                    'location'=>$hospital->location,
+                    'hospitalName' => $hospital->hospitalName,
+                    'location' => $hospital->location,
                 ]);
 
                 DB::table('appointment')
