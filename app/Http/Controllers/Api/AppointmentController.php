@@ -158,9 +158,9 @@ class AppointmentController extends Controller
                 'medical_record'    => $appointment->medical_record,
                 'date_time'   => $appointment->date_time ?? null,
                 'status'      => $appointment->status,
-                "hospitalId"=>$hospital->id,
-                "hospitalName"=>$hospital->hospitalName,
-                "hospitalLocation"=>$hospital->location,
+                "hospitalId" => $hospital->id,
+                "hospitalName" => $hospital->hospitalName,
+                "hospitalLocation" => $hospital->location,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ]);
@@ -172,6 +172,11 @@ class AppointmentController extends Controller
             DB::table('patient_notification')
                 ->where('patientId', $user->id)
                 ->delete();
+                
+            return response()->json([
+                'code' => 200,
+                'response' => 'Request accepted successfully',
+            ], 200);
         } else {
             return response()->json([
                 'code' => 404,
