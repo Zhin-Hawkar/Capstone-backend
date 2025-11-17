@@ -172,7 +172,12 @@ class AppointmentController extends Controller
             DB::table('patient_notification')
                 ->where('patientId', $user->id)
                 ->delete();
-                
+
+            DB::table('doctor_notification')
+                ->where('patientId', $user->id)
+                ->where('doctorId', $doctor->id)
+                ->delete();
+
             return response()->json([
                 'code' => 200,
                 'response' => 'Request accepted successfully',
