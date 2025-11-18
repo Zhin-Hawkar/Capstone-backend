@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyUrSelf;
 
 
 class UserController extends Controller
@@ -215,10 +217,12 @@ class UserController extends Controller
             ]);
 
             $resetCode = DB::table("users")->where("email", $validated["email"])->value("reset_password_code");
+
+            Mail::to($validated["email"])->send(new VerifyUrSelf($resetCode));
+
             return response()->json([
                 'code' => 200,
                 'reset_password_code' => $resetCode,
-
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -234,7 +238,7 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email'=>"required",
+                'email' => "required",
                 'reset_password_code' => "required",
             ]);
 
@@ -271,13 +275,13 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                "email"=>"required",
+                "email" => "required",
                 'password' => "required",
             ]);
 
             $validated = $validator->validate();
 
-            
+
 
             DB::table("users")->where("email", $validated["email"])->update([
                 "password" => Hash::make($validated["password"]),
