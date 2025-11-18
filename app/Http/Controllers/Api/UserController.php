@@ -218,7 +218,6 @@ class UserController extends Controller
 
             $resetCode = DB::table("users")->where("email", $validated["email"])->value("reset_password_code");
 
-            Mail::to($validated["email"])->send(new VerifyUrSelf($resetCode));
 
             return response()->json([
                 'code' => 200,
