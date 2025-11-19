@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string("doctorFirstName")->nullable();
             $table->string("doctorLastName")->nullable();
             $table->longText("ai_analysis")->nullable();
+            $table->string("doctorImage")->nullable();
             $table->string("gender")->nullable();
             $table->string('email')->unique();
             $table->string("department")->nullable();

@@ -19,12 +19,13 @@ return new class extends Migration
             $table->string("lastName")->nullable();
             $table->integer("age")->nullable();
             $table->string("gender")->nullable();
-            $table->string('email')->unique();
-            $table->string('help')->unique();
-            $table->longText('ai_analysis')->unique();
+            $table->string('email');
+            $table->string('help')->nullable();
+            $table->longText('ai_analysis')->nullable();
             $table->string("department")->nullable();
             $table->dateTime("date_time")->nullable();
             $table->string("status")->default("pending");
+            $table->string("image")->nullable();
             $table->timestamps();
         });
     }

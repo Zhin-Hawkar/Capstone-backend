@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('doctor_notification', function (Blueprint $table) {
             $table->id();
             $table->integer("patientId");//
+            $table->integer("doctorId")->nullable();//
             $table->string("firstName")->nullable();//
             $table->string("lastName")->nullable();//
+            $table->string("hospitalName")->nullable();//
             $table->integer("age")->nullable();//
             $table->string("gender")->nullable();//
             $table->integer("yearsofexperience")->nullable();//
             $table->string("description")->nullable();//
-            $table->string('email')->unique();//
+            $table->string('email');//
             $table->string("department")->nullable();//
             $table->string("hospital")->nullable();//
             $table->string("specialization")->nullable();//
@@ -28,6 +30,8 @@ return new class extends Migration
             $table->json("qualification")->nullable();//
             $table->dateTime("date_time")->nullable();//
             $table->string("status")->default("pending");//
+            $table->string("location")->nullable();//
+            $table->string("doctorImage")->nullable();//
             $table->timestamps();
         });
     }

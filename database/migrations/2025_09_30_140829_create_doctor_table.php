@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('email')->unique(); //
             $table->string('password'); //
             $table->string('remember_token'); //
+            $table->string('doctorImage')->nullable(); //
             $table->timestamps();
         });
     }
