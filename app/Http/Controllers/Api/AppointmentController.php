@@ -98,7 +98,7 @@ class AppointmentController extends Controller
 
             $appointments = DB::table("appointment")->where("patientId", $user->id)->get();
             foreach ($appointments as $appointment) {
-                event(new NewAppointmentRequest($appointment, $appointment->patientId));
+                event(new NewAppointmentRequest($appointment, $appointment->doctorId));
             }
 
             return response()->json([
