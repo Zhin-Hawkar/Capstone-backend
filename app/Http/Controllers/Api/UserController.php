@@ -89,8 +89,8 @@ class UserController extends Controller
                         'message' => "User logged in Successfully",
                         'user' => [
                             'id' => $doctor->id,
-                            'first_name' => $doctor->firstName,
-                            'last_name' => $doctor->lastName,
+                            'firstName' => $doctor->firstName,
+                            'lastName' => $doctor->lastName,
                             'specialization' => $doctor->specialization,
                             'qualification' => $doctor->qualification,
                             'hospital' => $doctor->hospital,

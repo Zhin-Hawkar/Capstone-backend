@@ -80,9 +80,9 @@ class DoctorController extends Controller
             'doctorImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'specialization' => 'nullable|string|max:255',
             'qualification' => 'nullable|string|max:255',
-            'licenseNumber' => 'nullable|integer|min:0',
+            'licenseId' => 'nullable|integer|min:0',
             'yearsofexperience' => 'nullable|integer|min:0',
-            'department' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',  
         ]);
 
         if ($validator->fails()) {
