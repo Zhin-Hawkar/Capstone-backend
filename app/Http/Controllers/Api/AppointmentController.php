@@ -97,13 +97,13 @@ class AppointmentController extends Controller
             }
 
             $appointments = DB::table("appointment")->where("patientId", $user->id)->get();
-            foreach ($appointments as $appointment) {
-                event(new NewAppointmentRequest($appointment, $appointment->doctorId));
-            }
+            
+                event(new NewAppointmentRequest());
+            
 
             return response()->json([
                 'code' => 200,
-                'appointment' => $appointment,
+                'appointment' => $appointments,
                 'doctors' => $doctors,
                 'message' => 'Appointment request sent successfully to all matching doctors.',
             ], 200);

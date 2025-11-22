@@ -16,14 +16,9 @@ class NewAppointmentRequest implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public $appointment;
-    public $doctor;
 
-    public function __construct($appointment, $doctor)
-    {
-        $this->appointment = $appointment;
-        $this->doctor = $doctor;
-    }
+
+    public function __construct() {}
 
     /**
      * Get the channels the event should broadcast on.
@@ -37,13 +32,7 @@ class NewAppointmentRequest implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        return [
-            'id' => $this->appointment->id,
-            'patient_name' => $this->appointment->firstName,
-            'status' => $this->appointment->status,
-            'time' => $this->appointment->date_time,
-            'doctor' => $this->doctor
-        ];
+        return [];
     }
     public function broadcastAs()
     {
