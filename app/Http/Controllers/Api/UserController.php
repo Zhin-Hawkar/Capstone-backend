@@ -100,7 +100,7 @@ class UserController extends Controller
                             'age' => $doctor->age,
                             'location' => $doctor->location,
                             'description' => $doctor->description,
-                            'image' => $doctor->image,
+                            'image' => $doctor->doctorImage,
                             'role' => $doctor->role,
                         ],
                         'token' => $token,
