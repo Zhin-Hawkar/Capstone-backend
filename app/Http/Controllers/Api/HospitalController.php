@@ -211,4 +211,10 @@ class HospitalController extends Controller
             ], 500);
         }
     }
+
+     public function logHospitalOut(Request $req)
+    {
+        $req->user()->currentAccessToken()->delete();
+        return response()->json(['code' => 200, 'message' => 'Logged out']);
+    }
 }

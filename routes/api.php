@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sendpatientnotification', [PatientNotificationController::class, 'sendPatientNotification']);
     Route::get('/senddoctornotification', [PatientNotificationController::class, 'sendDoctorNotification']);
     Route::get('/getalldoctors', [HospitalController::class, 'getAllDoctors']);
+    Route::post('/loghospitalout', [HospitalController::class, 'logHospitalOut']);
     Route::post('/deletedoctor', [DoctorController::class, 'deleteDoctor']);
     Route::get('/showmedicalrecords', [MedicalRecordsController::class, 'showMedicalRecords']);
     Route::get('/getstatistics', [StatisticsController::class, 'getStatistics']);
