@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HospitalController extends Controller
 {
@@ -173,6 +175,34 @@ class HospitalController extends Controller
             return response()->json([
                 'code' => 200,
                 'hospitals' => $hospitals,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function getAllDoctors()
+    {
+        try {
+            $hospital = Auth::user();
+
+            if (!$hospital) {
+                return response()->json([
+                    'message' => "No hospital"
+                ]);
+            }
+            $doctors = DB::table("doctor")->where("hospitalId", $hospital->id)->get();
+            if (!$doctors) {
+                return response()->json([
+                    'message' => "No doctors"
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'doctors' => $doctors,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
