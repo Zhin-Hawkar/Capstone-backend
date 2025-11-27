@@ -77,6 +77,8 @@ class MedicalRecordsController extends Controller
 
         ]);
 
+        DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status'=>"completed"]);
+
         $record = DB::table('users')
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
             ->select('users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
