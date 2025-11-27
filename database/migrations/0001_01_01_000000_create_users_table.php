@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password'); //
             $table->string('role'); //
             $table->integer('age'); //
+            $table->string('phoneNumber'); //
+            $table->string('gender'); //
             $table->string('location'); //
             $table->string('image'); //
             $table->longText('description'); //

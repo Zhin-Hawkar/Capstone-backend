@@ -19,16 +19,10 @@ class AppointmentController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'firstName' => "required",
-                'lastName' => "required",
-                'age' => "required",
-                'gender' => "required",
-                'email' => 'required|email',
                 'department' => "required",
                 'help' => "required",
                 'date_time' => "required",
                 'medical_record' => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png|max:5120',
-
             ]);
 
             if ($validator->fails()) {
@@ -66,12 +60,12 @@ class AppointmentController extends Controller
                 PatientNotification::create([
                     'patientId' => $user->id,
                     'doctorId' => $doctor->id,
-                    'firstName' => $validated['firstName'],
-                    'lastName' => $validated['lastName'],
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
                     'image' => $user->image,
-                    'age' => $validated['age'],
-                    'gender' => $validated['gender'],
-                    'email' => $validated['email'],
+                    'age' => $user->age,
+                    'gender' => $user->gender,
+                    'email' => $user->email,
                     'department' => $validated['department'],
                     'ai_analysis' => $aiResult,
                     'help' => $validated['help'],
@@ -81,14 +75,14 @@ class AppointmentController extends Controller
                 Appointment::create([
                     'patientId' => $user->id,
                     'doctorId' => $doctor->id,
-                    'firstName' => $validated['firstName'],
+                    'firstName' => $user->firstName,
                     'doctorFirstName' => $doctor->firstName,
                     'doctorLastName' => $doctor->lastName,
                     'doctorImage' => $doctor->doctorImage,
-                    'lastName' => $validated['lastName'],
-                    'age' => $validated['age'],
-                    'gender' => $validated['gender'],
-                    'email' => $validated['email'],
+                    'lastName' => $user->lastName,
+                    'age' => $user->age,
+                    'gender' => $user->gender,
+                    'email' => $user->email,
                     'department' => $validated['department'],
                     'help' => $validated['help'],
                     'ai_analysis' => $aiResult,
@@ -97,9 +91,9 @@ class AppointmentController extends Controller
             }
 
             $appointments = DB::table("appointment")->where("patientId", $user->id)->get();
-            
-                event(new NewAppointmentRequest());
-            
+
+            event(new NewAppointmentRequest());
+
 
             return response()->json([
                 'code' => 200,
