@@ -253,7 +253,7 @@ hospital_name: $acceptedAppointment->hospitalName
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . env("OPENROUTER_API_KEY"),
                 'Content-Type' => 'application/json',
-            ])->post(env("OPEN_ROUTER_ENDPOINT"), [
+            ])->post(env("OPENROUTER_ENDPOINT"), [
                 "model" => "openai/gpt-3.5-turbo",
                 "messages" => [
                     $systemMessage,
@@ -282,15 +282,19 @@ hospital_name: $acceptedAppointment->hospitalName
             $filePath = "legal_docs/" . $fileName;
 
 
-            Storage::put($filePath, $pdf->output());
+            Storage::disk('public')->put($filePath, $pdf->output());
 
-            $record = DB::table("legal_document")->create([
+            $recordId = DB::table("legal_document")->insertGetId([
                 "userId" => $acceptedAppointment->patientId,
                 "doctorId" => $acceptedAppointment->doctorId,
                 "hospitalId" => $acceptedAppointment->hospitalId,
                 "fileName" => $fileName,
                 "legalDocument" => $filePath
             ]);
+
+
+            $record = DB::table("legal_document")->where("id", $recordId)->first();
+
 
             return response()->json([
                 "success" => true,
