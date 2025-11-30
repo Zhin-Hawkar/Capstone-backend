@@ -29,6 +29,8 @@ Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalD
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
+    Route::post('/showpatientlegaldocument', [PatientNotificationController::class, 'showPatientLegalDocument']);
+    Route::post('/showdoctorlegaldocument', [PatientNotificationController::class, 'showDoctorLegalDocument']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
     Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
     Route::post('/logout', [UserController::class, 'logout']);

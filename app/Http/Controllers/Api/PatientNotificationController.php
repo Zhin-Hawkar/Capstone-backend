@@ -326,4 +326,49 @@ class PatientNotificationController extends Controller
             ], 500);
         }
     }
+
+    public function showPatientLegalDocument(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "doctorId" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()
+            ], 500);
+        }
+        $validated = $validator->validate();
+        $user = Auth::user();
+        $legalDocument = DB::table("legal_document")
+            ->where("patientId", $user->id)
+            ->where("doctorId", $validated["doctorId"])
+            ->first();
+
+        return response()->json([
+            'code' => 200,
+            'legal_document' => $legalDocument
+        ], 200);
+    }
+    public function showDoctorLegalDocument(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "patientId" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()
+            ], 500);
+        }
+        $validated = $validator->validate();
+        $user = Auth::user();
+        $legalDocument = DB::table("legal_document")
+            ->where("doctorId", $user->id)
+            ->where("patientId", $validated["patientId"])
+            ->first();
+
+        return response()->json([
+            'code' => 200,
+            'legal_document' => $legalDocument
+        ], 200);
+    }
 }

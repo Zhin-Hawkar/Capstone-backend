@@ -210,7 +210,7 @@ class AiChatLogController extends Controller
     }
 
 
-    public function generateLegalDocument()
+    public static function generateLegalDocument()
     {
         $user = Auth::user();
         $acceptedAppointment = DB::table("accepted_appointment")
@@ -270,20 +270,111 @@ hospital_name: {$acceptedAppointment->hospitalName}
                 return response()->json(["error" => "AI did not return a document"], 500);
             }
 
-            $html = "
+$html = '
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='utf-8'>
+<meta charset="utf-8">
 <style>
-    body { font-family: DejaVu Sans, sans-serif; font-size: 14px; line-height: 1.6; }
+    body {
+        font-family: DejaVu Sans, sans-serif;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #333;
+        margin: 40px;
+    }
+
+    .doc-container {
+        border: 1px solid #bbb;
+        padding: 40px;
+        border-radius: 8px;
+        background: #fafafa;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4px;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .header-info {
+        margin-bottom: 25px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-left: 4px solid #4a90e2;
+    }
+
+    .header-info p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .signature-box {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .signature-block {
+        width: 45%;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000;
+        margin-top: 50px;
+        padding-top: 5px;
+        font-size: 13px;
+    }
 </style>
 </head>
 <body>
-" . nl2br(e($documentText)) . "
+
+<div class="doc-container">
+
+    <h1>Legal Medical Service Agreement</h1>
+
+    <div class="header-info">
+        <p><strong>Patient Name:</strong> ' . e($acceptedAppointment->firstName ?? "") . '</p>
+        <p><strong>Doctor Name:</strong> ' . e($acceptedAppointment->doctorFirstName ?? "") . '</p>
+        <p><strong>Hospital Name:</strong> ' . e($acceptedAppointment->hospitalName ?? "") . '</p>
+        <p><strong>Date Issued:</strong> ' . date("Y-m-d") . '</p>
+    </div>
+
+    <div class="section">
+        ' . nl2br(e($documentText)) . '
+    </div>
+
+    <div class="signature-box">
+        <div class="signature-block">
+            <div class="signature-line">Patient Signature</div>
+        </div>
+        <div class="signature-block">
+            <div class="signature-line">Hospital / Doctor Signature</div>
+        </div>
+    </div>
+
+</div>
+
 </body>
 </html>
-";
+';
+
 
             $pdf = PDF::loadHTML($html);
 

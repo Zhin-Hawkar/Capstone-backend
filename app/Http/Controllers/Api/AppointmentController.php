@@ -173,6 +173,8 @@ class AppointmentController extends Controller
                     ->where('doctorId', $doctor->id)
                     ->delete();
 
+                AiChatLogController::generateLegalDocument();
+
                 return response()->json([
                     'code' => 200,
                     'response' => 'Request accepted successfully',
