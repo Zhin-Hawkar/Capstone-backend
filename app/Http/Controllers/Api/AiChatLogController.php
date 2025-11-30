@@ -210,17 +210,17 @@ class AiChatLogController extends Controller
     }
 
 
-   public function generateLegalDocument()
-{
-    $user = Auth::user();
-    $acceptedAppointment = DB::table("accepted_appointment")
-        ->where("patientId", $user->id)
-        ->first();
+    public function generateLegalDocument()
+    {
+        $user = Auth::user();
+        $acceptedAppointment = DB::table("accepted_appointment")
+            ->where("patientId", $user->id)
+            ->first();
 
-    try {
-        $systemMessage = [
-            "role" => "system",
-            "content" => "
+        try {
+            $systemMessage = [
+                "role" => "system",
+                "content" => "
 You generate a fully structured legal agreement between a patient and a hospital.
 
 The user will send:
@@ -241,65 +241,77 @@ Create a legal contract including:
 
 Return only the final formatted legal document.
 "
-        ];
+            ];
 
-        $userPrompt = "
+            $userPrompt = "
 patient_name: {$acceptedAppointment->firstName}
 doctor_name: {$acceptedAppointment->doctorFirstName}
 hospital_name: {$acceptedAppointment->hospitalName}
 ";
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . env("OPENROUTER_API_KEY"),
-            'Content-Type' => 'application/json',
-        ])->post(env("OPENROUTER_ENDPOINT"), [
-            "model" => "openai/gpt-4o-mini",
-            "messages" => [
-                $systemMessage,
-                ["role" => "user", "content" => $userPrompt]
-            ],
-            "temperature" => 0.3,
-            "max_tokens" => 1200
-        ]);
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . env("OPENROUTER_API_KEY"),
+                'Content-Type' => 'application/json',
+            ])->post(env("OPENROUTER_ENDPOINT"), [
+                "model" => "openai/gpt-4o-mini",
+                "messages" => [
+                    $systemMessage,
+                    ["role" => "user", "content" => $userPrompt]
+                ],
+                "temperature" => 0.3,
+                "max_tokens" => 1200
+            ]);
 
-        $aiResponse = $response->json();
-        $documentText = $aiResponse['choices'][0]['message']['content'] ?? null;
+            $aiResponse = $response->json();
+            $documentText = $aiResponse['choices'][0]['message']['content'] ?? null;
 
-        if (!$documentText) {
-            return response()->json(["error" => "AI did not return a document"], 500);
+            if (!$documentText) {
+                return response()->json(["error" => "AI did not return a document"], 500);
+            }
+
+            $html = "
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+    body { font-family: DejaVu Sans, sans-serif; font-size: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+" . nl2br(e($documentText)) . "
+</body>
+</html>
+";
+
+            $pdf = PDF::loadHTML($html);
+
+            $fileName = "legal_doc_" . time() . ".pdf";
+            $filePath = "legal_docs/" . $fileName;
+
+            Storage::disk('public')->put($filePath, $pdf->output());
+
+            $recordId = DB::table("legal_document")->insertGetId([
+                "userId" => $acceptedAppointment->patientId,
+                "doctorId" => $acceptedAppointment->doctorId,
+                "hospitalId" => $acceptedAppointment->hospitalId,
+                "fileName" => $fileName,
+                "legalDocument" => $filePath,
+                "created_at" => now(),
+                "updated_at" => now()
+            ]);
+
+            $record = DB::table("legal_document")->where("id", $recordId)->first();
+
+            return response()->json([
+                "success" => true,
+                "message" => "Legal document generated successfully",
+                "document" => $record->legalDocument,
+                "document_id" => $record->id,
+                "pdf_url" => asset("storage/" . $filePath)
+            ]);
+        } catch (Exception $e) {
+            return response()->json(["error" => $e->getMessage()]);
         }
-
-        $pdf = PDF::loadView('pdf.legal-document', [
-            "content" => nl2br(e($documentText))
-        ]);
-
-        $fileName = "legal_doc_" . time() . ".pdf";
-        $filePath = "legal_docs/" . $fileName;
-
-        Storage::disk('public')->put($filePath, $pdf->output());
-
-        $recordId = DB::table("legal_document")->insertGetId([
-            "userId" => $acceptedAppointment->patientId,
-            "doctorId" => $acceptedAppointment->doctorId,
-            "hospitalId" => $acceptedAppointment->hospitalId,
-            "fileName" => $fileName,
-            "legalDocument" => $filePath,
-            "created_at" => now(),
-            "updated_at" => now()
-        ]);
-
-        $record = DB::table("legal_document")->where("id", $recordId)->first();
-
-        return response()->json([
-            "success" => true,
-            "message" => "Legal document generated successfully",
-            "document" => $record->legalDocument,
-            "document_id" => $record->id,
-            "pdf_url" => asset("storage/" . $filePath)
-        ]);
-    } catch (Exception $e) {
-        return response()->json(["error" => $e->getMessage()]);
     }
-}
-
 }
