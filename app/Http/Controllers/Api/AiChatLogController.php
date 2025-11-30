@@ -389,6 +389,7 @@ $html = '
                 "hospitalId" => $acceptedAppointment->hospitalId,
                 "fileName" => $fileName,
                 "legalDocument" => $filePath,
+                "url" => asset("storage/" . $filePath),
                 "created_at" => now(),
                 "updated_at" => now()
             ]);
