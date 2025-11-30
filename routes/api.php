@@ -21,6 +21,7 @@ Route::get('/getallhospitals', [HospitalController::class, 'getAllHospitals']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/talktoai', [AiChatLogController::class, 'talkToAi']);
+Route::post('/generatelegaldocument', [AiChatLogController::class, 'generateLegalDocument']);
 Route::post('/generateresetcode', [UserController::class, 'generateResetCode']);
 Route::post('/verifycode', [UserController::class, 'verifyCode']);
 Route::post('/resetpassword', [UserController::class, 'resetPassword']);
