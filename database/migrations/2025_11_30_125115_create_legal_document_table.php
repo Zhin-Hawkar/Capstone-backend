@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('legal_document', function (Blueprint $table) {
             $table->id();
-            $table->integer('userId');
-            $table->integer('doctorId');
-            $table->integer('hospitalId');
-            $table->string('fileName');
-            $table->string('legalDocument');
+            $table->integer('userId')->nullable();
+            $table->integer('doctorId')->nullable();
+            $table->integer('hospitalId')->nullable();
+            $table->string('fileName')->nullable();
+            $table->string('legalDocument')->nullable();
             $table->timestamps();
         });
     }
