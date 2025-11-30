@@ -340,7 +340,7 @@ class PatientNotificationController extends Controller
         $validated = $validator->validate();
         $user = Auth::user();
         $legalDocument = DB::table("legal_document")
-            ->where("patientId", $user->id)
+            ->where("userId", $user->id)
             ->where("doctorId", $validated["doctorId"])
             ->first();
 
@@ -363,7 +363,7 @@ class PatientNotificationController extends Controller
         $user = Auth::user();
         $legalDocument = DB::table("legal_document")
             ->where("doctorId", $user->id)
-            ->where("patientId", $validated["patientId"])
+            ->where("userId", $validated["patientId"])
             ->first();
 
         return response()->json([
