@@ -222,7 +222,7 @@ class AiChatLogController extends Controller
                 "role" => "system",
                 "content" => "
 You generate a fully structured legal agreement between a patient and a hospital.
-Add the current date and time, and remove the signature in the end.
+Add the current date and time as Date Issued, and remove the signature in the end.
 
 The user will send:
 patient_name: {value}
