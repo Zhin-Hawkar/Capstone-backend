@@ -101,8 +101,8 @@ class DoctorController extends Controller
             $validated = $validator->validated();
 
             if ($req->hasFile('doctorImage')) {
-                if ($doctor->image) {
-                    $relativePath = str_replace(url('storage') . '/', '', $doctor->image);
+                if ($doctor->doctorImage) {
+                    $relativePath = str_replace(url('storage') . '/', '', $doctor->doctorImage);
                     if (Storage::disk('public')->exists($relativePath)) {
                         Storage::disk('public')->delete($relativePath);
                     }
