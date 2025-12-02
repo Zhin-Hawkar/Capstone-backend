@@ -113,7 +113,7 @@ class DoctorController extends Controller
             }
 
             DB::table('doctor')
-                ->where('id', Auth::id())
+                ->where('id', $doctor->id)
                 ->update($validated);
 
             return response()->json([
