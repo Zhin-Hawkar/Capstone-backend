@@ -68,7 +68,7 @@ class DoctorController extends Controller
     public function editDoctorProfile(Request $req)
     {
         try {
-            $doctor = Auth::user();
+            $doctor = DB::table("doctor")->where("email", $req->email)->first();
 
             if (!$doctor) {
                 return response()->json([
@@ -112,9 +112,7 @@ class DoctorController extends Controller
                 $validated['doctorImage'] = url('storage/' . $path);
             }
 
-            DB::table('doctor')
-                ->where('email', $doctor->email)
-                ->update($validated);
+            $doctor->update($validated);
 
             return response()->json([
                 'code' => 200,
