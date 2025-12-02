@@ -68,7 +68,7 @@ class DoctorController extends Controller
     public function editDoctorProfile(Request $req)
     {
         try {
-            $doctor = DB::table("doctor")->where("email", $req->email)->first();
+            $doctor = Doctor::where("email", $req->email)->first();
 
             if (!$doctor) {
                 return response()->json([
