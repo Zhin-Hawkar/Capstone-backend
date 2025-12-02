@@ -66,66 +66,84 @@ class DoctorController extends Controller
 
 
     public function editDoctorProfile(Request $req)
-    {
-        try {
-            $doctor = Doctor::where("email", $req->email)->first();
-
-            if (!$doctor) {
-                return response()->json([
-                    'code' => 401,
-                    'error' => "not authorized"
-                ], 401);
-            }
-
-            $validator = Validator::make($req->all(), [
-                'firstName' => 'nullable|string|max:255',
-                'lastName' => 'nullable|string|max:255',
-                'location' => 'nullable|string|max:255',
-                'age' => 'nullable|integer|min:0',
-                'description' => 'nullable|string|max:1000',
-                'doctorImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-                'specialization' => 'nullable|string|max:255',
-                'qualification' => 'nullable|string|max:255',
-                'licenseId' => 'nullable|integer|min:0',
-                'yearsofexperience' => 'nullable|integer|min:0',
-                'department' => 'nullable|string|max:255',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'code' => 422,
-                    'error' => $validator->errors(),
-                ], 422);
-            }
-
-            $validated = $validator->validated();
-
-            if ($req->hasFile('doctorImage')) {
-                if ($doctor->doctorImage) {
-                    $relativePath = str_replace(url('storage') . '/', '', $doctor->doctorImage);
-                    if (Storage::disk('public')->exists($relativePath)) {
-                        Storage::disk('public')->delete($relativePath);
-                    }
-                }
-
-                $path = $req->file('doctorImage')->store('doctor_images', 'public');
-                $validated['doctorImage'] = url('storage/' . $path);
-            }
-
-            $doctor->update($validated);
-
+{
+    try {
+        // 1. Ensure email exists
+        if (!$req->email) {
             return response()->json([
-                'code' => 200,
-                'message' => 'Profile updated successfully',
-                'doctor' => $doctor,
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                "code" => 500,
-                "error" => $e->getMessage()
-            ], 500);
+                'code' => 400,
+                'error' => 'Email is required'
+            ], 400);
         }
+
+        // 2. Get doctor safely
+        $doctor = Doctor::where("email", $req->email)->first();
+        if (!$doctor) {
+            return response()->json([
+                'code' => 404,
+                'error' => "Doctor not found"
+            ], 404);
+        }
+
+        // 3. Validate safely
+        $validator = Validator::make($req->all(), [
+            'firstName' => 'nullable|string|max:255',
+            'lastName' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0',
+            'description' => 'nullable|string|max:1000',
+            'doctorImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'specialization' => 'nullable|string|max:255',
+            'qualification' => 'nullable|string|max:255',
+            'licenseId' => 'nullable|integer|min:0',
+            'yearsofexperience' => 'nullable|integer|min:0',
+            'department' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 422,
+                'error' => $validator->errors(),
+            ], 422);
+        }
+
+        $validated = $validator->validated();
+
+        // 4. Handle image safely
+        if ($req->hasFile('doctorImage')) {
+
+            // Remove old image only if path is correct
+            if (!empty($doctor->doctorImage)) {
+                $relative = parse_url($doctor->doctorImage, PHP_URL_PATH);
+                $relative = str_replace('/storage/', '', $relative);
+
+                if (Storage::disk('public')->exists($relative)) {
+                    Storage::disk('public')->delete($relative);
+                }
+            }
+
+            $path = $req->file('doctorImage')->store('doctor_images', 'public');
+            $validated['doctorImage'] = url('storage/' . $path);
+        }
+
+        // 5. Update
+        $doctor->update($validated);
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Profile updated successfully',
+            'doctor' => $doctor->fresh(),
+        ], 200);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            "code" => 500,
+            "error" => $e->getMessage(),
+            "line" => $e->getLine()
+        ], 500);
     }
+}
+
 
     public function deleteDoctor(Request $request)
     {
