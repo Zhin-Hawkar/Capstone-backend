@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+
 
 
 class DoctorController extends Controller
@@ -62,7 +66,7 @@ class DoctorController extends Controller
 
     public function editDoctorProfile(Request $req)
     {
-        $doctor = Doctor::where('email', $req->email)->first();
+        $doctor = Auth::user();
 
         if (!$doctor) {
             return response()->json([
@@ -82,7 +86,7 @@ class DoctorController extends Controller
             'qualification' => 'nullable|string|max:255',
             'licenseId' => 'nullable|integer|min:0',
             'yearsofexperience' => 'nullable|integer|min:0',
-            'department' => 'nullable|string|max:255',  
+            'department' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -106,7 +110,9 @@ class DoctorController extends Controller
             $validated['doctorImage'] = url('storage/' . $path);
         }
 
-        $doctor->update($validated);
+        DB::table('doctor')
+            ->where('id', Auth::id())
+            ->update($validated);
 
         return response()->json([
             'code' => 200,
