@@ -111,14 +111,10 @@ class DoctorController extends Controller
 
         // 4. Handle image safely
         if ($req->hasFile('doctorImage')) {
-
-            // Remove old image only if path is correct
-            if (!empty($doctor->doctorImage)) {
-                $relative = parse_url($doctor->doctorImage, PHP_URL_PATH);
-                $relative = str_replace('/storage/', '', $relative);
-
-                if (Storage::disk('public')->exists($relative)) {
-                    Storage::disk('public')->delete($relative);
+            if ($doctor->doctorImage) {
+                $relativePath = str_replace(url('storage') . '/', '', $doctor->doctorImage);
+                if (Storage::disk('public')->exists($relativePath)) {
+                    Storage::disk('public')->delete($relativePath);
                 }
             }
 
