@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
 Route::get('/getallfeedbacks', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
 Route::post('/loghospitalin', [HospitalController::class, 'logHospitalIn']);
@@ -30,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showpatientlegaldocument', [PatientNotificationController::class, 'showPatientLegalDocument']);
+    Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
     Route::post('/showdoctorlegaldocument', [PatientNotificationController::class, 'showDoctorLegalDocument']);
     Route::post('/showappointments', [PatientNotificationController::class, 'showAppointments']);
     Route::post('/acceptpatientrequest', [PatientNotificationController::class, 'acceptPatientRequest']);
