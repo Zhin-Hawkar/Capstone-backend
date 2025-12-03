@@ -24,10 +24,11 @@ Route::post('/generateresetcode', [UserController::class, 'generateResetCode']);
 Route::post('/verifycode', [UserController::class, 'verifyCode']);
 Route::post('/resetpassword', [UserController::class, 'resetPassword']);
 Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalData'])
-->name('analyze.medical.data');
+    ->name('analyze.medical.data');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
+    Route::post('/showhospitaldoctoracceptedappointments', [PatientNotificationController::class, 'showHospitalDoctorAcceptedAppointments']);
     Route::post('/showpatientlegaldocument', [PatientNotificationController::class, 'showPatientLegalDocument']);
     Route::post('/registerdoctor', [DoctorController::class, 'registerDoctor']);
     Route::post('/showdoctorlegaldocument', [PatientNotificationController::class, 'showDoctorLegalDocument']);

@@ -84,6 +84,26 @@ class PatientNotificationController extends Controller
             ], 500);
         }
     }
+    public function showHospitalDoctorAcceptedAppointments()
+    {
+        try {
+            $user = Auth::user();
+
+            $notification = DB::table('accepted_appointment')
+                ->where("hospitalId", $user->id)
+                ->get();
+
+            return response()->json([
+                'code' => 200,
+                'notification' => $notification
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function showAppointments()
     {
         try {
