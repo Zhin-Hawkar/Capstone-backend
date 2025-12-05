@@ -98,7 +98,7 @@ class MedicalRecordsController extends Controller
         $user = Auth::user();
         $record = DB::table('users')
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
-            ->select('medical_records.id', 'users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
+            ->select('medical_records.id', 'users.email', 'medical_records.fileName', 'medical_records.medicalRecord', 'medical_records.privacy')
             ->where('users.id', $user->id)
             ->get();
         return response()->json([
