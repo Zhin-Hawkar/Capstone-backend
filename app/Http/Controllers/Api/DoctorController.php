@@ -136,6 +136,18 @@ class DoctorController extends Controller
         }
     }
 
+    public function getUniqueValues()
+{
+    $values = DB::table('doctor')
+        ->distinct()
+        ->pluck('department');
+
+    return response()->json([
+        'code' => 200,
+        'data' => $values
+    ]);
+}
+
 
     public function deleteDoctor(Request $request)
     {

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/getuniquevalues', [DoctorController::class, 'getUniqueValues']);
 Route::get('/getallfeedbacks', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
 Route::post('/editprivacy', [MedicalRecordsController::class, 'editPrivacy']);
