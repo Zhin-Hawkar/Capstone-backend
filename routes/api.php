@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/getallfeedbacks', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
+Route::post('/editprivacy', [MedicalRecordsController::class, 'editPrivacy']);
 Route::post('/loghospitalin', [HospitalController::class, 'logHospitalIn']);
 Route::get('/getallhospitals', [HospitalController::class, 'getAllHospitals']);
 Route::post('/register', [UserController::class, 'register']);

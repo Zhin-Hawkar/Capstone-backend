@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedicalRecords;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,7 +76,7 @@ class MedicalRecordsController extends Controller
             'userId' => $user->id,
             'fileName' => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
-            'privacy'=>"public"
+            'privacy' => "public"
         ]);
 
         DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status' => "completed"]);
@@ -123,6 +124,42 @@ class MedicalRecordsController extends Controller
             'record' => $record,
         ], 200);
     }
+
+
+
+    public function editPrivacy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "id" => "required|integer",
+            "privacy" => "required|in:public,private",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 500,
+                "error" => $validator->errors()
+            ], 500);
+        }
+
+        $validated = $validator->validated();
+
+        try {
+            DB::table("medical_records")
+                ->where("id", $validated["id"])
+                ->update(["privacy" => $validated["privacy"]]);
+
+            return response()->json([
+                "code" => 200,
+                "message" => "Privacy updated successfully"
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "code" => 500,
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function deleteMedicalRecord(Request $request)
     {
