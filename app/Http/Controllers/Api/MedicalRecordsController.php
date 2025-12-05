@@ -35,7 +35,8 @@ class MedicalRecordsController extends Controller
         MedicalRecords::create([
             'userId' => $user->id,
             'fileName' => $request['fileName'],
-            'medicalRecord' => $validated['medicalRecord']
+            'medicalRecord' => $validated['medicalRecord'],
+            'privacy' => "public"
 
         ]);
 
@@ -73,11 +74,11 @@ class MedicalRecordsController extends Controller
         MedicalRecords::create([
             'userId' => $user->id,
             'fileName' => $request['fileName'],
-            'medicalRecord' => $validated['medicalRecord']
-
+            'medicalRecord' => $validated['medicalRecord'],
+            'privacy'=>"public"
         ]);
 
-        DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status'=>"completed"]);
+        DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status' => "completed"]);
 
         $record = DB::table('users')
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
@@ -115,6 +116,7 @@ class MedicalRecordsController extends Controller
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
             ->select('medical_records.id', 'users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
             ->where('users.id', $user->id)
+            ->where('medical_records.privacy', "public")
             ->get();
         return response()->json([
             'code' => 200,

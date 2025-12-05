@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('userId');
             $table->string('fileName');
             $table->string('medicalRecord');
+            $table->string('privacy');
             $table->timestamps();
         });
     }

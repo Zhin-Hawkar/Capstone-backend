@@ -15,5 +15,6 @@ class MedicalRecords extends Model
         'userId',
         'fileName',
         'medicalRecord',
+        'privacy',
     ];
 }
