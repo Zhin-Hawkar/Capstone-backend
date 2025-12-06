@@ -157,7 +157,7 @@ class AppointmentController extends Controller
             $doctors = DB::table("doctor")
                 ->where("department", $validated["department"])
                 ->when(!empty($acceptedAppointment), function ($query) use ($acceptedAppointment) {
-                    return $query->whereNotIn("doctorId", $acceptedAppointment);
+                    return $query->whereNotIn("id", $acceptedAppointment);
                 })
                 ->get();
 
