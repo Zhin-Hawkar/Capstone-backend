@@ -214,7 +214,7 @@ class AppointmentController extends Controller
                 ->where("doctorId", $validated["doctorId"])
                 ->delete();
             DB::table("legal_document")
-                ->where("patientId", $user->id)
+                ->where("userId", $user->id)
                 ->where("doctorId", $validated["doctorId"])
                 ->delete();
             return response()->json([
