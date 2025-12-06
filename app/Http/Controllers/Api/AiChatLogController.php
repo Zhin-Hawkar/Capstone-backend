@@ -216,6 +216,7 @@ class AiChatLogController extends Controller
         $user = Auth::user();
         $acceptedAppointment = DB::table("accepted_appointment")
             ->where("patientId", $user->id)
+            ->orderBy("id", "desc")
             ->first();
 
         try {
@@ -271,7 +272,7 @@ hospital_name: {$acceptedAppointment->hospitalName}
                 return response()->json(["error" => "AI did not return a document"], 500);
             }
 
-$html = '
+            $html = '
 <!DOCTYPE html>
 <html>
 <head>
