@@ -6,6 +6,7 @@ use App\Events\NewAppointmentRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\PatientNotification;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -186,6 +187,37 @@ class AppointmentController extends Controller
                 ], 404);
             }
         } catch (\Exception $e) {
+            return response()->json([
+                "code" => 500,
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function endAppointment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "doctorId" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 500,
+                "error" => $validator->errors()
+            ], 500);
+        }
+        $validated = $validator->validated();
+
+        try {
+            $user = Auth::user();
+            DB::table("accepted_appointment")
+                ->where("patientId", $user->id)
+                ->where("doctorId", $validated["doctorId"])
+                ->delete();
+            return response()->json([
+                "code" => 200,
+                "message" => "appointment ended successfuly",
+            ], 200);
+        } catch (Exception $e) {
             return response()->json([
                 "code" => 500,
                 "error" => $e->getMessage()

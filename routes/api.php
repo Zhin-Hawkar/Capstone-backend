@@ -57,4 +57,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showmedicalrecordstodoctor', [MedicalRecordsController::class, 'showMedicalRecordsToDoctor']);
     Route::post('/edituserprofile', [UserController::class, 'editProfile']);
     Route::post('/addfeedback', [FeedbackController::class, 'addFeedback']);
+    Route::post('/endappointment', [AppointmentController::class, 'endAppointment']);
 });
