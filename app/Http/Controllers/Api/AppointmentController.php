@@ -16,6 +16,102 @@ use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
+    //original
+    // public function sendAppointment(Request $request)
+    // {
+    //     try {
+    //         $validator = Validator::make($request->all(), [
+    //             'department' => "required",
+    //             'help' => "required",
+    //             'date_time' => "required",
+    //             'medical_record' => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg,png|max:5120',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'code' => 400,
+    //                 'error' => $validator->errors(),
+    //             ], 400);
+    //         }
+
+    //         $validated = $validator->validated();
+    //         $user = Auth::user();
+    //         $http = Http::asMultipart();
+
+    //         if ($request->hasFile('medical_record')) {
+    //             $file = $request->file('medical_record');
+    //             $http = $http->attach(
+    //                 'medical_record',
+    //                 file_get_contents($file->getRealPath()),
+    //                 $file->getClientOriginalName()
+    //             );
+    //         }
+
+    //         $aiRequest = $http->post(route('analyze.medical.data'), [
+    //             'text' => $validated['help'],
+    //         ]);
+
+    //         $aiResponse = $aiRequest->json();
+    //         $aiResult = $aiResponse['ai_analysis'] ?? 'No AI analysis available.';
+
+    //         $doctors = DB::table("doctor")
+    //             ->where("department", $validated["department"])
+    //             ->get();
+
+    //         foreach ($doctors as $doctor) {
+    //             PatientNotification::create([
+    //                 'patientId' => $user->id,
+    //                 'doctorId' => $doctor->id,
+    //                 'firstName' => $user->firstName,
+    //                 'lastName' => $user->lastName,
+    //                 'image' => $user->image,
+    //                 'age' => $user->age,
+    //                 'gender' => $user->gender,
+    //                 'email' => $user->email,
+    //                 'department' => $validated['department'],
+    //                 'ai_analysis' => $aiResult,
+    //                 'help' => $validated['help'],
+    //                 'date_time' => $validated['date_time'],
+    //             ]);
+
+    //             Appointment::create([
+    //                 'patientId' => $user->id,
+    //                 'doctorId' => $doctor->id,
+    //                 'firstName' => $user->firstName,
+    //                 'doctorFirstName' => $doctor->firstName,
+    //                 'doctorLastName' => $doctor->lastName,
+    //                 'doctorImage' => $doctor->doctorImage,
+    //                 'lastName' => $user->lastName,
+    //                 'age' => $user->age,
+    //                 'gender' => $user->gender,
+    //                 'email' => $user->email,
+    //                 'department' => $validated['department'],
+    //                 'help' => $validated['help'],
+    //                 'ai_analysis' => $aiResult,
+    //                 'date_time' => $validated['date_time'],
+    //             ]);
+    //         }
+
+    //         $appointments = DB::table("appointment")->where("patientId", $user->id)->get();
+
+    //         event(new NewAppointmentRequest());
+
+
+    //         return response()->json([
+    //             'code' => 200,
+    //             'appointment' => $appointments,
+    //             'doctors' => $doctors,
+    //             'message' => 'Appointment request sent successfully to all matching doctors.',
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'code' => 500,
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    //new
     public function sendAppointment(Request $request)
     {
         try {
@@ -52,6 +148,18 @@ class AppointmentController extends Controller
 
             $aiResponse = $aiRequest->json();
             $aiResult = $aiResponse['ai_analysis'] ?? 'No AI analysis available.';
+
+
+            $acceptedAppointment = DB::table("accepted_appointment")
+                ->where("patientId", $user->id)
+                ->pluck("doctorId")
+                ->toArray();
+            $doctors = DB::table("doctor")
+                ->where("department", $validated["department"])
+                ->when(!empty($acceptedAppointment), function ($query) use ($acceptedAppointment) {
+                    return $query->whereNotIn("id", $acceptedAppointment);
+                })
+                ->get();
 
             $doctors = DB::table("doctor")
                 ->where("department", $validated["department"])
