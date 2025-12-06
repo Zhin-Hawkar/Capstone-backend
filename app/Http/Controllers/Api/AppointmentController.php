@@ -151,7 +151,7 @@ class AppointmentController extends Controller
 
 
             $acceptedAppointment = DB::table("accepted_appointment")
-                ->where("patientId", $user->id)
+                ->where("department", $validated["department"])
                 ->pluck("doctorId")
                 ->toArray();
             $doctors = DB::table("doctor")
@@ -159,10 +159,6 @@ class AppointmentController extends Controller
                 ->when(!empty($acceptedAppointment), function ($query) use ($acceptedAppointment) {
                     return $query->whereNotIn("id", $acceptedAppointment);
                 })
-                ->get();
-
-            $doctors = DB::table("doctor")
-                ->where("department", $validated["department"])
                 ->get();
 
             foreach ($doctors as $doctor) {
