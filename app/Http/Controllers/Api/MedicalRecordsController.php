@@ -37,7 +37,7 @@ class MedicalRecordsController extends Controller
             'userId' => $user->id,
             'fileName' => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
-            'privacy' => "public"
+            'privacy' => "private"
 
         ]);
 
@@ -76,7 +76,7 @@ class MedicalRecordsController extends Controller
             'userId' => $user->id,
             'fileName' => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
-            'privacy' => "private"
+            'privacy' => "public"
         ]);
 
         DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status' => "completed"]);
