@@ -209,7 +209,7 @@ class MedicalRecordsController extends Controller
                         "fileId" => $validated["id"],
                         "userId" => $user->id,
                         "doctorId" => $validated["doctorId"],
-                        "url" => $validated["url"],
+                        "medicalRecord" => $validated["url"],
                         "fileName" => $validated["fileName"],
                         "created_at" => now(),
                         "updated_at" => now()
