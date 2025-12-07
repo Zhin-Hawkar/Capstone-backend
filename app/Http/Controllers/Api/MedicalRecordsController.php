@@ -106,18 +106,34 @@ class MedicalRecordsController extends Controller
             'record' => $record,
         ], 200);
     }
+    // public function showMedicalRecordsToDoctor(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         "patientId" => "required",
+    //     ]);
+    //     $validated = $validator->validate();
+    //     $user = DB::table("users")->where("id", $validated["patientId"])->first();
+    //     $record = DB::table('users')
+    //         ->join('medical_records', 'users.id', '=', 'medical_records.userId')
+    //         ->select('medical_records.id', 'users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
+    //         ->where('users.id', $user->id)
+    //         ->where('medical_records.privacy', "public")
+    //         ->get();
+    //     return response()->json([
+    //         'code' => 200,
+    //         'record' => $record,
+    //     ], 200);
+    // }
     public function showMedicalRecordsToDoctor(Request $request)
     {
+        $doctor = Auth::user();
         $validator = Validator::make($request->all(), [
             "patientId" => "required",
         ]);
         $validated = $validator->validate();
-        $user = DB::table("users")->where("id", $validated["patientId"])->first();
-        $record = DB::table('users')
-            ->join('medical_records', 'users.id', '=', 'medical_records.userId')
-            ->select('medical_records.id', 'users.email', 'medical_records.fileName', 'medical_records.medicalRecord')
-            ->where('users.id', $user->id)
-            ->where('medical_records.privacy', "public")
+        $record = DB::table("medical_record_access")
+            ->where("userId", $validated["patientId"])
+            ->where("doctorId", $doctor->id)
             ->get();
         return response()->json([
             'code' => 200,
@@ -127,10 +143,44 @@ class MedicalRecordsController extends Controller
 
 
 
+    // public function editPrivacy(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         "id" => "required|integer",
+    //         "privacy" => "required|in:public,private",
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             "code" => 500,
+    //             "error" => $validator->errors()
+    //         ], 500);
+    //     }
+
+    //     $validated = $validator->validated();
+
+    //     try {
+    //         DB::table("medical_records")
+    //             ->where("id", $validated["id"])
+    //             ->update(["privacy" => $validated["privacy"]]);
+
+    //         return response()->json([
+    //             "code" => 200,
+    //             "message" => "Privacy updated successfully"
+    //         ]);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             "code" => 500,
+    //             "error" => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function editPrivacy(Request $request)
     {
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             "id" => "required|integer",
+            "doctorId" => "required|integer",
             "privacy" => "required|in:public,private",
         ]);
 
@@ -144,9 +194,37 @@ class MedicalRecordsController extends Controller
         $validated = $validator->validated();
 
         try {
+            if ($validated["privacy"] == "public") {
+
+                $exists = DB::table("medical_record_access")
+                    ->where("fileId", $validated["id"])
+                    ->where("userId", $user->id)
+                    ->where("doctorId", $validated["doctorId"])
+                    ->exists();
+
+                if (!$exists) {
+                    DB::table("medical_record_access")->insert([
+                        "fileId" => $validated["id"],
+                        "userId" => $user->id,
+                        "doctorId" => $validated["doctorId"],
+                        "created_at" => now(),
+                        "updated_at" => now()
+                    ]);
+                }
+            } else if ($validated["privacy"] == "private") {
+
+                DB::table("medical_record_access")
+                    ->where("fileId", $validated["id"])
+                    ->where("userId", $user->id)
+                    ->where("doctorId", $validated["doctorId"])
+                    ->delete();
+            }
+
             DB::table("medical_records")
                 ->where("id", $validated["id"])
                 ->update(["privacy" => $validated["privacy"]]);
+
+
 
             return response()->json([
                 "code" => 200,

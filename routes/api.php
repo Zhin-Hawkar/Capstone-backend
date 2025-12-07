@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/getuniquevalues', [DoctorController::class, 'getUniqueValues']);
 Route::get('/getallfeedbacks', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/registerhospital', [HospitalController::class, 'registerHospital']);
-Route::post('/editprivacy', [MedicalRecordsController::class, 'editPrivacy']);
 Route::post('/loghospitalin', [HospitalController::class, 'logHospitalIn']);
 Route::get('/getallhospitals', [HospitalController::class, 'getAllHospitals']);
 Route::post('/register', [UserController::class, 'register']);
@@ -26,9 +25,10 @@ Route::post('/generateresetcode', [UserController::class, 'generateResetCode']);
 Route::post('/verifycode', [UserController::class, 'verifyCode']);
 Route::post('/resetpassword', [UserController::class, 'resetPassword']);
 Route::post('/analyzemedicaldata', [AiChatLogController::class, 'analyzeMedicalData'])
-    ->name('analyze.medical.data');
+->name('analyze.medical.data');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/showpatientacceptedappointments', [PatientNotificationController::class, 'showPatientAcceptedAppointments']);
+    Route::post('/editprivacy', [MedicalRecordsController::class, 'editPrivacy']);
     Route::post('/showdoctoracceptedappointments', [PatientNotificationController::class, 'showDoctorAcceptedAppointments']);
     Route::post('/showhospitaldoctoracceptedappointments', [PatientNotificationController::class, 'showHospitalDoctorAcceptedAppointments']);
     Route::post('/showpatientlegaldocument', [PatientNotificationController::class, 'showPatientLegalDocument']);
