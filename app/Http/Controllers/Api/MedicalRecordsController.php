@@ -181,6 +181,8 @@ class MedicalRecordsController extends Controller
         $validator = Validator::make($request->all(), [
             "id" => "required|integer",
             "doctorId" => "required|integer",
+            "url" => "required",
+            "fileName" => "required",
             "privacy" => "required|in:public,private",
         ]);
 
@@ -207,6 +209,8 @@ class MedicalRecordsController extends Controller
                         "fileId" => $validated["id"],
                         "userId" => $user->id,
                         "doctorId" => $validated["doctorId"],
+                        "url" => $validated["url"],
+                        "fileName" => $validated["fileName"],
                         "created_at" => now(),
                         "updated_at" => now()
                     ]);

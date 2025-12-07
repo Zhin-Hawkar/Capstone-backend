@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer("fileId");
             $table->integer("userId");
             $table->integer("doctorId");
+            $table->string("url");
+            $table->string("fileName");
             $table->timestamps();
         });
     }
