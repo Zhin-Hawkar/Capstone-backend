@@ -54,6 +54,7 @@ class MedicalRecordsController extends Controller
     }
     public function uploadMedicalDocument(Request $request)
     {
+        $doctor = Auth::user();
         $validator = Validator::make($request->all(), [
             'patientId' => "required",
             'medicalRecord' => "required|file|mimes:pdf,jpeg|max:20480"
@@ -74,9 +75,18 @@ class MedicalRecordsController extends Controller
 
         MedicalRecords::create([
             'userId' => $user->id,
+            'doctorId' => $doctor->id,
             'fileName' => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
             'privacy' => "public"
+        ]);
+        $fileId = DB::table("medical_records")->where("userId", $user->id)->where("medicalRecord", $validated["medicalRecord"])->first();
+
+        DB::table("medical_record_access")->insert([
+            'userId' => $user->id,
+            'fileId' => $fileId->id,
+            'fileName' => $request['fileName'],
+            'medicalRecord' => $validated['medicalRecord'],
         ]);
 
         DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status' => "completed"]);
@@ -248,6 +258,9 @@ class MedicalRecordsController extends Controller
         $record = MedicalRecords::find($request->id);
         if ($record) {
             $record->delete();
+            DB::table("medical_record_access")
+                ->where("fileId", $request->id)
+                ->delete();
             return response()->json([
                 "code" => 200,
                 "msg" => "record deleted",
