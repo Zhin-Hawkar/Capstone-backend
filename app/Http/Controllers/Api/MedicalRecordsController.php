@@ -55,6 +55,7 @@ class MedicalRecordsController extends Controller
     public function uploadMedicalDocument(Request $request)
     {
         $doctor = Auth::user();
+
         $validator = Validator::make($request->all(), [
             'patientId' => "required",
             'medicalRecord' => "required|file|mimes:pdf,jpeg|max:20480"
@@ -65,7 +66,9 @@ class MedicalRecordsController extends Controller
                 'error' => $validator->errors()
             ]);
         }
+
         $validated = $validator->validated();
+
         $user = DB::table("users")->where("id", $validated["patientId"])->first();
 
         if ($request->hasFile('medicalRecord')) {
@@ -73,23 +76,24 @@ class MedicalRecordsController extends Controller
             $validated['medicalRecord'] = url('storage/' . $path);
         }
 
-        MedicalRecords::create([
-            'userId' => $user->id,
-            'doctorId' => $doctor->id,
-            'fileName' => $request['fileName'],
+        $medicalRecord = MedicalRecords::create([
+            'userId'        => $user->id,
+            'fileName'      => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
-            'privacy' => "public"
+            'privacy'       => "public",
         ]);
-        $fileId = DB::table("medical_records")->where("userId", $user->id)->where("medicalRecord", $validated["medicalRecord"])->first();
 
         DB::table("medical_record_access")->insert([
-            'userId' => $user->id,
-            'fileId' => $fileId->id,
-            'fileName' => $request['fileName'],
+            'userId'        => $user->id,
+            'doctorId'        => $doctor->id,
+            'fileId'        => $medicalRecord->id,
+            'fileName'      => $request['fileName'],
             'medicalRecord' => $validated['medicalRecord'],
         ]);
 
-        DB::table("accepted_appointment")->where("patientId", $user->id)->update(['status' => "completed"]);
+        DB::table("accepted_appointment")
+            ->where("patientId", $user->id)
+            ->update(['status' => "completed"]);
 
         $record = DB::table('users')
             ->join('medical_records', 'users.id', '=', 'medical_records.userId')
@@ -102,6 +106,7 @@ class MedicalRecordsController extends Controller
             'record' => $record,
         ], 200);
     }
+
 
     public function showMedicalRecords()
     {
